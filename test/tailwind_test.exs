@@ -7,6 +7,7 @@ defmodule TailwindTest do
     assert ExUnit.CaptureIO.capture_io(fn ->
              assert Tailwind.run(:default, ["--help"]) == 0
            end) =~ @version
+    assert File.exists?("assets/tailwind.config.js")
   end
 
   test "run on profile" do
