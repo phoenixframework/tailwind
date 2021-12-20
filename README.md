@@ -92,8 +92,10 @@ def deps do
 end
 ```
 
-Now let's change `config/config.exs` to configure `tailwind` to use
-`assets/js/app.js` as an entry point and write to `priv/static/assets`:
+Now let's change `config/config.exs` to tell `tailwind` to use
+configuration in `assets/tailwind.config.js` for building our css
+bundle into `priv/static/assets`. We'll also give it our `assets/css/app.css`
+as our css entry point:
 
 ```elixir
 config :tailwind,
