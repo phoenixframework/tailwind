@@ -119,13 +119,13 @@ configuration in your `config/dev.exs` and add:
   tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
 ```
 
-Note we are inlining source maps and enabling the file system watcher.
+Note we are enabling the file system watcher.
 
 Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
 alias for deployments, which will also use the `--minify` option:
 
 ```elixir
-"assets.deploy": ["tailwind default --minify", "phx.digest"]
+"assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
 ```
 
 ## Tailwind Configuration
