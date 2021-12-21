@@ -223,25 +223,18 @@ defmodule Tailwind do
     File.mkdir_p!("assets")
 
     File.write!(Path.expand("assets/tailwind.config.js"), """
-    const colors = require('tailwindcss/colors')
-
     module.exports = {
-      darkMode: 'media',
-      mode: 'jit',
-      purge: [
+      content: [
         './js/**/*.js',
         '../lib/*_web.ex',
         '../lib/*_web/**/*.*ex'
       ],
       theme: {
-        colors: colors
-      },
-      variants: {
         extend: {},
       },
       plugins: [
         require('@tailwindcss/forms')
-      ],
+      ]
     }
     """)
   end
