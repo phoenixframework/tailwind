@@ -257,7 +257,7 @@ defmodule Tailwind do
 
     case {:os.type(), arch, :erlang.system_info(:wordsize) * 8} do
       {{:win32, _}, _arch, 64} -> "windows-x64.exe"
-      {{:unix, :darwin}, "arm", 64} -> "macos-arm64"
+      {{:unix, :darwin}, arch, 64} when arch in ~w(arm aarch64) -> "macos-arm64"
       {{:unix, :darwin}, "x86_64", 64} -> "macos-x64"
       {{:unix, _osname}, "x86_64", 64} -> "linux-x64"
       {_os, _arch, _wordsize} -> raise "tailwind is not available for architecture: #{arch_str}"
