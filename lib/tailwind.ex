@@ -223,6 +223,8 @@ defmodule Tailwind do
     File.mkdir_p!("assets")
 
     File.write!(Path.expand("assets/tailwind.config.js"), """
+    // See the Tailwind configuration guide for advanced usage
+    // https://tailwindcss.com/docs/configuration
     module.exports = {
       content: [
         './js/**/*.js',
