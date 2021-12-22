@@ -122,11 +122,19 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
-Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
+Back in your `mix.exs`, make sure you have a `assets.deploy`
 alias for deployments, which will also use the `--minify` option:
 
 ```elixir
 "assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
+```
+
+Finally, add the Tailwind directives to your `assets/app.css` file:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 ```
 
 ## Tailwind Configuration
