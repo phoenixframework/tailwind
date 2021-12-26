@@ -3,7 +3,7 @@
 [![CI](https://github.com/phoenixframework/tailwind/actions/workflows/main.yml/badge.svg)](https://github.com/phoenixframework/tailwind/actions/workflows/main.yml)
 
 Mix tasks for installing and invoking [tailwindcss](https://tailwindcss.com) via the
-stand-alone [tailwindcss cli](https://github.com/tailwindlabs/tailwindcss-standalone)
+stand-alone [tailwindcss cli](https://github.com/tailwindlabs/tailwindcss/tree/master/standalone-cli)
 
 ## Installation
 
