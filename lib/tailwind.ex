@@ -222,23 +222,27 @@ defmodule Tailwind do
 
     File.mkdir_p!("assets")
 
-    File.write!(Path.expand("assets/tailwind.config.js"), """
-    // See the Tailwind configuration guide for advanced usage
-    // https://tailwindcss.com/docs/configuration
-    module.exports = {
-      content: [
-        './js/**/*.js',
-        '../lib/*_web.ex',
-        '../lib/*_web/**/*.*ex'
-      ],
-      theme: {
-        extend: {},
-      },
-      plugins: [
-        require('@tailwindcss/forms')
-      ]
-    }
-    """)
+    default_config_path = Path.expand("assets/tailwind.config.js")
+
+    unless File.exists?(default_config_path) do
+      File.write!(default_config_path, """
+      // See the Tailwind configuration guide for advanced usage
+      // https://tailwindcss.com/docs/configuration
+      module.exports = {
+        content: [
+          './js/**/*.js',
+          '../lib/*_web.ex',
+          '../lib/*_web/**/*.*ex'
+        ],
+        theme: {
+          extend: {},
+        },
+        plugins: [
+          require('@tailwindcss/forms')
+        ]
+      }
+      """)
+    end
   end
 
   # Available targets:
