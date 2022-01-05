@@ -13,7 +13,6 @@ defmodule Tailwind do
 
       config :tailwind,
         version: "#{@latest_version}",
-        version: "3.0.7",
         default: [
           args: ~w(
             --config=tailwind.config.js
