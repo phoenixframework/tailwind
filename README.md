@@ -138,7 +138,7 @@ Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
 alias for deployments, which will also use the `--minify` option:
 
 ```elixir
-"assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
+"assets.deploy": ["esbuild default --minify", "tailwind default --minify", ..., "phx.digest"]
 ```
 
 ## Tailwind Configuration
