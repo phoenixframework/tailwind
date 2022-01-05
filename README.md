@@ -79,7 +79,7 @@ to the ones configured above. Note profiles must be configured in your
 
 ## Adding to Phoenix
 
-To add `tailwind` to an application using Phoenix, you need only four steps.  Installation requires that Phoenix watchers can accept module-function-args tuples which is not built into Phoenix 1.5.9.
+To add `tailwind` to an application using Phoenix, you need only four steps. Installation requires that Phoenix watchers can accept module-function-args tuples which is not built into Phoenix 1.5.9.
 
 First add it as a dependency in your `mix.exs`:
 
@@ -113,6 +113,18 @@ config :tailwind,
 > Make sure the "assets" directory from priv/static is listed in the
 > :only option for Plug.Static in your lib/my_app_web/endpoint.ex
 
+If your Phoenix application is using an umbrella structure, you should specify
+the web application's asset directory in the configuration:
+
+```elixir
+config :tailwind,
+  version: "3.0.7",
+  default: [
+    args: ...,
+    cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)
+  ]
+```
+
 For development, we want to enable watch mode. So find the `watchers`
 configuration in your `config/dev.exs` and add:
 
@@ -136,7 +148,7 @@ will be placed in a new `assets/tailwind.config.js` file. See
 the [tailwind documentation](https://tailwindcss.com/docs/configuration)
 on configuration options.
 
-*Note*: The stand-alone Tailwind client bundles first-class tailwind packages
+_Note_: The stand-alone Tailwind client bundles first-class tailwind packages
 within the precompiled executable. For third-party Tailwind plugin support,
 the node package must be used. See the [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
 
