@@ -49,6 +49,7 @@ defmodule TailwindTest do
 
   test "install on existing app.css" do
     File.write!("assets/css/app.css", """
+    @import "./phoenix.css";
     body {
     }
     """)
