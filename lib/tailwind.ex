@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "3.0.7"
+  @latest_version "3.0.10"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwind.github.io).
@@ -124,7 +124,7 @@ defmodule Tailwind do
       unknown tailwind profile. Make sure the profile is defined in your config/config.exs file, such as:
 
           config :tailwind,
-            version: "3.0.7",
+            version: "3.0.10",
             #{profile}: [
               args: ~w(
                 --config=tailwind.config.js
@@ -215,6 +215,7 @@ defmodule Tailwind do
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
     bin_path = bin_path()
     app_css = app_css()
+    tailwind_config_path = Path.expand("assets/tailwind.config.js")
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
     File.write!(bin_path, binary, [:binary])
@@ -232,23 +233,25 @@ defmodule Tailwind do
       """)
     end
 
-    File.write!(Path.expand("assets/tailwind.config.js"), """
-    // See the Tailwind configuration guide for advanced usage
-    // https://tailwindcss.com/docs/configuration
-    module.exports = {
-      content: [
-        './js/**/*.js',
-        '../lib/*_web.ex',
-        '../lib/*_web/**/*.*ex'
-      ],
-      theme: {
-        extend: {},
-      },
-      plugins: [
-        require('@tailwindcss/forms')
-      ]
-    }
-    """)
+    unless File.exists?(tailwind_config_path) do
+      File.write!(tailwind_config_path, """
+      // See the Tailwind configuration guide for advanced usage
+      // https://tailwindcss.com/docs/configuration
+      module.exports = {
+        content: [
+          './js/**/*.js',
+          '../lib/*_web.ex',
+          '../lib/*_web/**/*.*ex'
+        ],
+        theme: {
+          extend: {},
+        },
+        plugins: [
+          require('@tailwindcss/forms')
+        ]
+      }
+      """)
+    end
   end
 
   # Available targets:
