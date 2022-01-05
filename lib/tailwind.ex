@@ -215,12 +215,23 @@ defmodule Tailwind do
     name = "tailwindcss-#{target()}"
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
     bin_path = bin_path()
+    app_css = app_css()
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
     File.write!(bin_path, binary, [:binary])
     File.chmod(bin_path, 0o755)
 
-    File.mkdir_p!("assets")
+    File.mkdir_p!("assets/css")
+
+    unless app_css =~ "tailwind" do
+      File.write!("assets/css/app.css", """
+      @import "tailwindcss/base";
+      @import "tailwindcss/components";
+      @import "tailwindcss/utilities";
+
+      #{app_css}
+      """)
+    end
 
     File.write!(Path.expand("assets/tailwind.config.js"), """
     // See the Tailwind configuration guide for advanced usage
@@ -300,6 +311,13 @@ defmodule Tailwind do
 
       other ->
         raise "couldn't fetch #{url}: #{inspect(other)}"
+    end
+  end
+
+  defp app_css do
+    case File.read("assets/css/app.css") do
+      {:ok, str} -> str
+      {:error, _} -> ""
     end
   end
 end
