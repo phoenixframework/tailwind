@@ -34,7 +34,7 @@ Once installed, change your `config/config.exs` to pick your
 tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "3.0.7"
+config :tailwind, version: "3.0.10"
 ```
 
 Now you can install tailwind by running:
@@ -61,7 +61,7 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "3.0.7",
+  version: "3.0.10",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -99,7 +99,7 @@ as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "3.0.7",
+  version: "3.0.10",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -118,7 +118,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "3.0.7",
+  version: "3.0.10",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)
