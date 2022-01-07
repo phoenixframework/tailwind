@@ -34,7 +34,7 @@ Once installed, change your `config/config.exs` to pick your
 tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "3.0.10"
+config :tailwind, version: "3.0.12"
 ```
 
 Now you can install tailwind by running:
