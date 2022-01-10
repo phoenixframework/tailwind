@@ -56,14 +56,15 @@ defmodule TailwindTest do
 
     Mix.Task.rerun("tailwind.install")
 
-    expected_css = String.trim("""
-    @import "tailwindcss/base";
-    @import "tailwindcss/components";
-    @import "tailwindcss/utilities";
+    expected_css =
+      String.trim("""
+      @import "tailwindcss/base";
+      @import "tailwindcss/components";
+      @import "tailwindcss/utilities";
 
-    body {
-    }
-    """)
+      body {
+      }
+      """)
 
     assert String.trim(File.read!("assets/css/app.css")) == expected_css
 

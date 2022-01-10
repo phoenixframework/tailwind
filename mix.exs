@@ -9,6 +9,7 @@ defmodule Tailwind.MixProject do
       app: :tailwind,
       version: @version,
       elixir: "~> 1.10",
+      otp: ">= 22.0",
       deps: deps(),
       description: "Mix tasks for installing and invoking tailwind",
       package: [
