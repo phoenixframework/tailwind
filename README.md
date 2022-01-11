@@ -134,6 +134,8 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
+Check you have correctly remove the `import "../css/app.css"` line  in your `assets/js/app.js`.
+
 Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
 alias for deployments, which will also use the `--minify` option:
 
