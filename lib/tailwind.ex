@@ -214,7 +214,6 @@ defmodule Tailwind do
     name = "tailwindcss-#{target()}"
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
     bin_path = bin_path()
-    app_css = app_css()
     tailwind_config_path = Path.expand("assets/tailwind.config.js")
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
@@ -223,15 +222,8 @@ defmodule Tailwind do
 
     File.mkdir_p!("assets/css")
 
-    unless app_css =~ "tailwind" do
-      File.write!("assets/css/app.css", """
-      @import "tailwindcss/base";
-      @import "tailwindcss/components";
-      @import "tailwindcss/utilities";
-
-      #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}
-      """)
-    end
+    prepare_app_css()
+    prepare_app_js()
 
     unless File.exists?(tailwind_config_path) do
       File.write!(tailwind_config_path, """
@@ -315,6 +307,30 @@ defmodule Tailwind do
 
       other ->
         raise "couldn't fetch #{url}: #{inspect(other)}"
+    end
+  end
+
+  defp prepare_app_css do
+    app_css = app_css()
+
+    unless app_css =~ "tailwind" do
+      File.write!("assets/css/app.css", """
+      @import "tailwindcss/base";
+      @import "tailwindcss/components";
+      @import "tailwindcss/utilities";
+
+      #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}
+      """)
+    end
+  end
+
+  defp prepare_app_js do
+    case File.read("assets/js/app.js") do
+      {:ok, app_js} ->
+        File.write!("assets/js/app.js", String.replace(app_js, ~s|import "../css/app.css"\n|, ""))
+
+      {:error, _} ->
+        :ok
     end
   end
 

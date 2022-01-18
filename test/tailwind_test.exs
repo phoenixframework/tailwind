@@ -5,6 +5,8 @@ defmodule TailwindTest do
 
   setup do
     Application.put_env(:tailwind, :version, @version)
+    File.mkdir_p!("assets/js")
+    File.mkdir_p!("assets/css")
     File.rm("assets/tailwind.config.js")
     File.rm("assets/css/app.css")
     :ok
@@ -47,11 +49,17 @@ defmodule TailwindTest do
            end) =~ @version
   end
 
-  test "install on existing app.css" do
+  test "install on existing app.css and app.js" do
     File.write!("assets/css/app.css", """
     @import "./phoenix.css";
     body {
     }
+    """)
+
+    File.write!("assets/js/app.js", """
+    import "../css/app.css"
+
+    let Hooks = {}
     """)
 
     Mix.Task.rerun("tailwind.install")
@@ -66,10 +74,17 @@ defmodule TailwindTest do
       }
       """)
 
+    expected_js =
+      String.trim("""
+
+      let Hooks = {}
+      """)
+
     assert String.trim(File.read!("assets/css/app.css")) == expected_css
+    assert String.trim(File.read!("assets/js/app.js")) == expected_js
 
     Mix.Task.rerun("tailwind.install")
 
-    assert String.trim(File.read!("assets/css/app.css")) == expected_css
+    assert String.trim(File.read!("assets/js/app.js")) == expected_js
   end
 end
