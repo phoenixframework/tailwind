@@ -20,10 +20,10 @@ defmodule Tailwind.MixProject do
         licenses: ["MIT"]
       ],
       docs: [
-        main: "Tailwind",
+        main: "readme",
         source_url: @source_url,
         source_ref: "v#{@version}",
-        extras: ["CHANGELOG.md"]
+        extras: ["README.md", "CHANGELOG.md", "LICENSE.md"]
       ],
       xref: [
         exclude: [:httpc, :public_key]

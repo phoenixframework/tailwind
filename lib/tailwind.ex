@@ -1,73 +1,9 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "3.0.12"
+  @latest_version "3.0.13"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwind.github.io).
-
-  ## Profiles
-
-  You can define multiple tailwind profiles. By default, there is a
-  profile called `:default` which you can configure its args, current
-  directory and environment:
-
-      config :tailwind,
-        version: "#{@latest_version}",
-        default: [
-          args: ~w(
-            --config=tailwind.config.js
-            --input=css/app.css
-            --output=../priv/static/assets/app.css
-          ),
-          cd: Path.expand("../assets", __DIR__),
-        ]
-
-  ## Tailwind configuration
-
-  There are two global configurations for the tailwind application:
-
-    * `:version` - the expected tailwind version
-
-    * `:path` - the path to find the tailwind executable at. By
-      default, it is automatically downloaded and placed inside
-      the `_build` directory of your current app
-
-  Overriding the `:path` is not recommended, as we will automatically
-  download and manage `tailwind` for you. But in case you can't download
-  it (for example, GitHub behind a proxy), you may want to
-  set the `:path` to a configurable system location.
-
-  For instance, you can install `tailwind` globally with `npm`:
-
-      $ npm install -g tailwind
-
-  On Unix, the executable will be at:
-
-      NPM_ROOT/tailwind/node_modules/tailwind-TARGET/bin/tailwind
-
-  On Windows, it will be at:
-
-      NPM_ROOT/tailwind/node_modules/tailwind-windows-(32|64)/tailwind.exe
-
-  Where `NPM_ROOT` is the result of `npm root -g` and `TARGET` is your system
-  target architecture.
-
-  Once you find the location of the executable, you can store it in a
-  `MIX_TAILWIND_PATH` environment variable, which you can then read in
-  your configuration file:
-
-      config :tailwind, path: System.get_env("")
-
-  The first time this package is installed, a default tailwind configuration
-  will be placed in a new `assets/tailwind.config.js` file. See
-  the [tailwind documentation](https://tailwindcss.com/docs/configuration)
-  on configuration options.
-
-  *Note*: The stand-alone Tailwind client bundles first-class tailwind packages
-  within the precompiled executable. For third-party Tailwind plugin support,
-  the node package must be used. See the
-  [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation)
-  if you require third-party plugin support.
   """
 
   use Application
@@ -124,7 +60,7 @@ defmodule Tailwind do
       unknown tailwind profile. Make sure the profile is defined in your config/config.exs file, such as:
 
           config :tailwind,
-            version: "3.0.10",
+            version: "#{latest_version()}",
             #{profile}: [
               args: ~w(
                 --config=tailwind.config.js
