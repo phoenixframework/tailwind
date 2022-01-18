@@ -4,6 +4,7 @@
   * Prune app.js css import to remove required manual step on first install
 
 ## v0.1.4 (2022-01-07)
+  * Bump tailwindcss to v3.0.12 to support alpine linux and others requiring statically linked builds
 
 ## v0.1.3 (2022-01-04)
   * Bump tailwindcss to v3.0.10
