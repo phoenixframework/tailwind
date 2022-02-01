@@ -319,7 +319,9 @@ defmodule Tailwind do
       @import "tailwindcss/components";
       @import "tailwindcss/utilities";
 
-      #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}
+      #{String.replace(app_css,
+      ~r|(@import "./\w+.css";)\n|,
+      "/* Tailwind CLI does not support local @import; merge the file into app.css or see Tailwind documentation */\n/* \\1 */\n\n")}
       """)
     end
   end

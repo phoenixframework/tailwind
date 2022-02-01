@@ -52,6 +52,7 @@ defmodule TailwindTest do
   test "install on existing app.css and app.js" do
     File.write!("assets/css/app.css", """
     @import "./phoenix.css";
+    @import "./custom.css";
     body {
     }
     """)
@@ -69,6 +70,12 @@ defmodule TailwindTest do
       @import "tailwindcss/base";
       @import "tailwindcss/components";
       @import "tailwindcss/utilities";
+
+      /* Tailwind CLI does not support local @import; merge the file into app.css or see Tailwind documentation */
+      /* @import "./phoenix.css"; */
+
+      /* Tailwind CLI does not support local @import; merge the file into app.css or see Tailwind documentation */
+      /* @import "./custom.css"; */
 
       body {
       }
