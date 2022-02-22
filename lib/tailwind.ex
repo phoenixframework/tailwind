@@ -3,7 +3,7 @@ defmodule Tailwind do
   @latest_version "3.0.12"
 
   @moduledoc """
-  Tailwind is an installer and runner for [tailwind](https://tailwind.github.io).
+  Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
 
   ## Profiles
 
