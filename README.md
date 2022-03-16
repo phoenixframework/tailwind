@@ -79,7 +79,8 @@ to the ones configured above. Note profiles must be configured in your
 
 ## Adding to Phoenix
 
-To add `tailwind` to an application using Phoenix, you need only four steps. Installation requires that Phoenix watchers can accept module-function-args tuples which is not built into Phoenix 1.5.9.
+To add `tailwind` to an application using Phoenix, you will need Phoenix v1.6+
+and the following four steps.
 
 First add it as a dependency in your `mix.exs`:
 
@@ -134,7 +135,8 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
-Check you have correctly remove the `import "../css/app.css"` line  in your `assets/js/app.js`.
+Check you have correctly removed the `import "../css/app.css"` line
+in your `assets/js/app.js`.
 
 Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
 alias for deployments, which will also use the `--minify` option:
@@ -156,6 +158,7 @@ the node package must be used. See the [tailwind nodejs installation instruction
 
 ## License
 
+Copyright (c) 2022 Chris McCord.
 Copyright (c) 2021 Wojtek Mach, José Valim.
 
 tailwind source code is licensed under the [MIT License](LICENSE.md).
