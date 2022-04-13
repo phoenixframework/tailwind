@@ -39,7 +39,7 @@ defmodule Tailwind do
 
   For instance, you can install `tailwind` globally with `npm`:
 
-      $ npm install -g tailwind
+      $ npm install -g tailwindcss
 
   On Unix, the executable will be at:
 
