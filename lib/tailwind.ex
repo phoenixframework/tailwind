@@ -73,6 +73,15 @@ defmodule Tailwind do
   use Application
   require Logger
 
+  @valid_config_targets [
+    "windows-x64.exe",
+    "macos-arm64",
+    "macos-x64",
+    "linux-arm64",
+    "linux-x64",
+    nil
+  ]
+
   @doc false
   def start(_, _) do
     unless Application.get_env(:tailwind, :version) do
@@ -97,6 +106,22 @@ defmodule Tailwind do
 
       :error ->
         :ok
+    end
+
+    configured_optional_target = Application.get_env(:tailwind, :target)
+
+    @valid_config_targets
+    |> Enum.member?(configured_optional_target)
+    |> unless do
+      # Logger.warn("""
+      # #{configured_optional_target} is not one of the listed supported
+      # tailwind platforms. Choose from #{Enum.join(@valid_config_targets, ", ")}
+      # """)
+
+      raise ArgumentError, """
+      #{configured_optional_target} is not one of the listed supported
+      tailwind platforms. Choose from #{Enum.join(@valid_config_targets, ", ")}
+      """
     end
 
     Supervisor.start_link([], strategy: :one_for_one)
@@ -142,7 +167,7 @@ defmodule Tailwind do
   The executable may not be available if it was not yet installed.
   """
   def bin_path do
-    name = "tailwind-#{target()}"
+    name = "tailwind-#{target!()}"
 
     Application.get_env(:tailwind, :path) ||
       if Code.ensure_loaded?(Mix.Project) do
@@ -211,7 +236,7 @@ defmodule Tailwind do
   """
   def install do
     version = configured_version()
-    name = "tailwindcss-#{target()}"
+    name = "tailwindcss-#{target!()}"
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
     bin_path = bin_path()
     tailwind_config_path = Path.expand("assets/tailwind.config.js")
@@ -252,17 +277,43 @@ defmodule Tailwind do
   #  tailwindcss-macos-arm64
   #  tailwindcss-macos-x64
   #  tailwindcss-windows-x64.exe
-  defp target do
+  #  target specified in config
+  defp target! do
     arch_str = :erlang.system_info(:system_architecture)
     [arch | _] = arch_str |> List.to_string() |> String.split("-")
 
-    case {:os.type(), arch, :erlang.system_info(:wordsize) * 8} do
-      {{:win32, _}, _arch, 64} -> "windows-x64.exe"
-      {{:unix, :darwin}, arch, 64} when arch in ~w(arm aarch64) -> "macos-arm64"
-      {{:unix, :darwin}, "x86_64", 64} -> "macos-x64"
-      {{:unix, :linux}, "aarch64", 64} -> "linux-arm64"
-      {{:unix, _osname}, arch, 64} when arch in ~w(x86_64 amd64) -> "linux-x64"
-      {_os, _arch, _wordsize} -> raise "tailwind is not available for architecture: #{arch_str}"
+    overrided_target = Application.get_env(:tailwind, :target)
+
+    cond do
+      overrided_target == nil ->
+        case {:os.type(), arch, :erlang.system_info(:wordsize) * 8} do
+          {{:win32, _}, _arch, 64} ->
+            "windows-x64.exe"
+
+          {{:unix, :darwin}, arch, 64} when arch in ~w(arm aarch64) ->
+            "macos-arm64"
+
+          {{:unix, :darwin}, "x86_64", 64} ->
+            "macos-x64"
+
+          {{:unix, :linux}, "aarch64", 64} ->
+            "linux-arm64"
+
+          {{:unix, _osname}, arch, 64} when arch in ~w(x86_64 amd64) ->
+            "linux-x64"
+
+          {_os, _arch, _wordsize} ->
+            raise "tailwind is not available for architecture: #{arch_str}"
+        end
+
+      overrided_target not in @valid_config_targets ->
+        raise ArgumentError, """
+          #{overrided_target} not in the list of accepted platform targets,
+          if you are going to specify a target, use #{Enum.join(@valid_config_targets, ", ")}
+        """
+
+      overrided_target ->
+        overrided_target
     end
   end
 
