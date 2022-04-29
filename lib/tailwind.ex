@@ -108,22 +108,6 @@ defmodule Tailwind do
         :ok
     end
 
-    configured_optional_target = Application.get_env(:tailwind, :target)
-
-    @valid_config_targets
-    |> Enum.member?(configured_optional_target)
-    |> unless do
-      # Logger.warn("""
-      # #{configured_optional_target} is not one of the listed supported
-      # tailwind platforms. Choose from #{Enum.join(@valid_config_targets, ", ")}
-      # """)
-
-      raise ArgumentError, """
-      #{configured_optional_target} is not one of the listed supported
-      tailwind platforms. Choose from #{Enum.join(@valid_config_targets, ", ")}
-      """
-    end
-
     Supervisor.start_link([], strategy: :one_for_one)
   end
 
