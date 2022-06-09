@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.6 (2022-06-09)
+  * Bump tailwindcss to v3.1.0
+
 ## v0.1.5 (2022-01-18)
   * Prune app.js css import to remove required manual step on first install
 
