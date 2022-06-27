@@ -28,7 +28,7 @@ defmodule Mix.Tasks.Tailwind.Install do
   def run(args) do
     valid_options = [runtime_config: :boolean, if_missing: :boolean, skip_prepare: :boolean]
 
-    case OptionParser.parse_head!(args, strict: valid_options) do
+    case OptionParser.parse_head(args, strict: valid_options) do
       {opts, []} ->
         if opts[:runtime_config], do: Mix.Task.run("app.config")
 
@@ -40,14 +40,14 @@ defmodule Mix.Tasks.Tailwind.Install do
           |> Tailwind.install()
         end
 
-      {_, _} ->
+      {_, _, _} ->
         Mix.raise("""
-        Invalid arguments to tailwind.install, expected one of:
+        Invalid arguments to tailwind.install
 
-            mix tailwind.install
-            mix tailwind.install --runtime-config
-            mix tailwind.install --if-missing
-            mix tailwind.install --skip-prepare
+        usage: mix tailwind.install [--runtime-config] [--if-missing] [--skip-prepare]
+          --runtime-config: Tells the task runner to load the runtime mix config before installing
+          --if-missing: Detect if tailwind is installed first, then abort
+          --skip-prepare: Do not automatically modify assets/js/app.js or assets/css/app.css for tailwind
         """)
     end
   end
