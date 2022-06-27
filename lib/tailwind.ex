@@ -209,7 +209,7 @@ defmodule Tailwind do
   @doc """
   Installs tailwind with `configured_version/0`.
   """
-  def install do
+  def install(opts \\ []) do
     version = configured_version()
     name = "tailwindcss-#{target()}"
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
@@ -220,10 +220,8 @@ defmodule Tailwind do
     File.write!(bin_path, binary, [:binary])
     File.chmod(bin_path, 0o755)
 
-    File.mkdir_p!("assets/css")
-
-    prepare_app_css()
-    prepare_app_js()
+    prepare_app_css(Keyword.get(opts, :skip_prepare, false))
+    prepare_app_js(Keyword.get(opts, :skip_prepare, false))
 
     unless File.exists?(tailwind_config_path) do
       File.write!(tailwind_config_path, """
@@ -310,7 +308,8 @@ defmodule Tailwind do
     end
   end
 
-  defp prepare_app_css do
+  defp prepare_app_css(false) do
+    File.mkdir_p!("assets/css")
     app_css = app_css()
 
     unless app_css =~ "tailwind" do
@@ -324,7 +323,9 @@ defmodule Tailwind do
     end
   end
 
-  defp prepare_app_js do
+  defp prepare_app_css(_), do: :ok
+
+  defp prepare_app_js(false) do
     case File.read("assets/js/app.js") do
       {:ok, app_js} ->
         File.write!("assets/js/app.js", String.replace(app_js, ~s|import "../css/app.css"\n|, ""))
@@ -333,6 +334,8 @@ defmodule Tailwind do
         :ok
     end
   end
+
+  defp prepare_app_js(_), do: :ok
 
   defp app_css do
     case File.read("assets/css/app.css") do

@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Tailwind.Install do
 
   @impl true
   def run(args) do
-    valid_options = [runtime_config: :boolean, if_missing: :boolean]
+    valid_options = [runtime_config: :boolean, if_missing: :boolean, skip_prepare: :boolean]
 
     case OptionParser.parse_head!(args, strict: valid_options) do
       {opts, []} ->
@@ -35,7 +35,9 @@ defmodule Mix.Tasks.Tailwind.Install do
         if opts[:if_missing] && latest_version?() do
           :ok
         else
-          Tailwind.install()
+          opts
+          |> Keyword.take([:skip_prepare])
+          |> Tailwind.install()
         end
 
       {_, _} ->
@@ -45,6 +47,7 @@ defmodule Mix.Tasks.Tailwind.Install do
             mix tailwind.install
             mix tailwind.install --runtime-config
             mix tailwind.install --if-missing
+            mix tailwind.install --skip-prepare
         """)
     end
   end
