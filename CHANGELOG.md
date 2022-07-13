@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.7 (2022-06-09)
+  * Bump tailwindcss to v3.1.6
+  * Add Phoenix LiveView variants
+
 ## v0.1.6 (2022-06-09)
   * Bump tailwindcss to v3.1.0
 

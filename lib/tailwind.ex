@@ -68,6 +68,18 @@ defmodule Tailwind do
   the node package must be used. See the
   [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation)
   if you require third-party plugin support.
+
+  The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
+  lifecycle classes:
+
+    * phx-no-feedback - applied when feedback should be hidden from the user
+    * phx-click-loading - applied when an event is sent to the server on click
+      while the client awaits the server response
+    * phx-submit-loading - applied when a form is submitted while the client awaits the server response
+    * phx-submit-loading - applied when a form input is changed while the client awaits the server response
+
+  Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
+  when Phoenix LiveView classes are applied.
   """
 
   use Application
