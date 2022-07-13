@@ -34,7 +34,7 @@ Once installed, change your `config/config.exs` to pick your
 tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "3.1.0"
+config :tailwind, version: "3.1.6"
 ```
 
 Now you can install tailwind by running:
@@ -61,7 +61,7 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "3.1.0",
+  version: "3.1.7",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -88,7 +88,7 @@ First add it as a dependency in your `mix.exs`:
 def deps do
   [
     {:phoenix, "~> 1.6"},
-    {:tailwind, "~> 0.1.6", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.7", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -100,7 +100,7 @@ as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "3.1.0",
+  version: "3.1.7",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -119,7 +119,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "3.1.0",
+  version: "3.1.7",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)
@@ -155,6 +155,17 @@ on configuration options.
 _Note_: The stand-alone Tailwind client bundles first-class tailwind packages
 within the precompiled executable. For third-party Tailwind plugin support,
 the node package must be used. See the [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
+
+The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
+lifecycle classes:
+
+  * phx-no-feedback - applied when feedback should be hidden from the user
+  * phx-click-loading - applied when an event is sent to the server on click while the client awaits the server response
+  * phx-submit-loading - applied when a form is submitted while the client awaits the server response
+  * phx-submit-loading - applied when a form input is changed while the client awaits the server response
+
+Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
+when Phoenix LiveView classes are applied.
 
 ## License
 
