@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "3.1.0"
+  @latest_version "3.1.6"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
@@ -136,7 +136,7 @@ defmodule Tailwind do
       unknown tailwind profile. Make sure the profile is defined in your config/config.exs file, such as:
 
           config :tailwind,
-            version: "3.1.0",
+            version: "3.1.6",
             #{profile}: [
               args: ~w(
                 --config=tailwind.config.js
@@ -241,6 +241,8 @@ defmodule Tailwind do
       File.write!(tailwind_config_path, """
       // See the Tailwind configuration guide for advanced usage
       // https://tailwindcss.com/docs/configuration
+      const plugin = require('tailwindcss/plugin')
+
       module.exports = {
         content: [
           './js/**/*.js',
