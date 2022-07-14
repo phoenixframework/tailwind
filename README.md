@@ -61,7 +61,7 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "3.1.7",
+  version: "3.1.6",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -88,7 +88,7 @@ First add it as a dependency in your `mix.exs`:
 def deps do
   [
     {:phoenix, "~> 1.6"},
-    {:tailwind, "~> 0.1.7", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -100,7 +100,7 @@ as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "3.1.7",
+  version: "3.1.6",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -119,7 +119,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "3.1.7",
+  version: "3.1.6",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)

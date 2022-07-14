@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "3.1.0"
+  @latest_version "3.1.6"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
@@ -241,6 +241,9 @@ defmodule Tailwind do
       File.write!(tailwind_config_path, """
       // See the Tailwind configuration guide for advanced usage
       // https://tailwindcss.com/docs/configuration
+
+      let plugin = require('tailwindcss/plugin')
+
       module.exports = {
         content: [
           './js/**/*.js',

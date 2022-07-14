@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## v0.1.7 (2022-06-09)
+## v0.1.8 (2022-07-14)
+  * Fix generated tailwind.config.js missing plugin reference
+
+## v0.1.7 (2022-07-13)
   * Bump tailwindcss to v3.1.6
   * Add Phoenix LiveView variants
 
