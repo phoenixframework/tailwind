@@ -241,6 +241,8 @@ defmodule Tailwind do
       File.write!(tailwind_config_path, """
       // See the Tailwind configuration guide for advanced usage
       // https://tailwindcss.com/docs/configuration
+      const  plugin = require('tailwindcss/plugin')
+
       module.exports = {
         content: [
           './js/**/*.js',
