@@ -130,7 +130,7 @@ For development, we want to enable watch mode. So find the `watchers`
 configuration in your `config/dev.exs` and add:
 
 ```elixir
-  tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+  mix: ["tailwind", "default", "--watch", cd: Path.expand("..", __DIR__)]
 ```
 
 Note we are enabling the file system watcher.
