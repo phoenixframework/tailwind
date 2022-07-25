@@ -77,6 +77,22 @@ to the ones configured above. Note profiles must be configured in your
 `config/config.exs`, as `tailwind` runs without starting your application
 (and therefore it won't pick settings in `config/runtime.exs`).
 
+Some version of tailwind fail on M1 Silicon macs, you can override the targetted platform in your config like so:
+
+```elixir
+config :tailwind,
+  version: "3.0.10",
+  target: "macos-x64"
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
+  ]
+```
+
 ## Adding to Phoenix
 
 To add `tailwind` to an application using Phoenix, you will need Phoenix v1.6+
