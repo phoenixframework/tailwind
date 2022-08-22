@@ -12,6 +12,9 @@ defmodule Mix.Tasks.Tailwind.Install do
 
       config :tailwind, :version, "#{Tailwind.latest_version()}"
 
+  It also writes to `assets/` files to enable tailwind if they
+  have not already been configured.
+
   ## Options
 
       * `--runtime-config` - load the runtime configuration
@@ -36,6 +39,7 @@ defmodule Mix.Tasks.Tailwind.Install do
           :ok
         else
           Tailwind.install()
+          Tailwind.configure_files()
         end
 
       {_, _} ->

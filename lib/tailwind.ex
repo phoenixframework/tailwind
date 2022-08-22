@@ -212,7 +212,7 @@ defmodule Tailwind do
   """
   def install_and_run(profile, args) do
     unless File.exists?(bin_path()) do
-      install_tailwind()
+      install()
     end
 
     run(profile, args)
@@ -222,44 +222,6 @@ defmodule Tailwind do
   Installs tailwind with `configured_version/0`.
   """
   def install do
-    install_tailwind()
-
-    tailwind_config_path = Path.expand("assets/tailwind.config.js")
-
-    File.mkdir_p!("assets/css")
-
-    prepare_app_css()
-    prepare_app_js()
-
-    unless File.exists?(tailwind_config_path) do
-      File.write!(tailwind_config_path, """
-      // See the Tailwind configuration guide for advanced usage
-      // https://tailwindcss.com/docs/configuration
-
-      let plugin = require('tailwindcss/plugin')
-
-      module.exports = {
-        content: [
-          './js/**/*.js',
-          '../lib/*_web.ex',
-          '../lib/*_web/**/*.*ex'
-        ],
-        theme: {
-          extend: {},
-        },
-        plugins: [
-          require('@tailwindcss/forms'),
-          plugin(({addVariant}) => addVariant('phx-no-feedback', ['&.phx-no-feedback', '.phx-no-feedback &'])),
-          plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
-          plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
-          plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
-        ]
-      }
-      """)
-    end
-  end
-
-  defp install_tailwind do
     version = configured_version()
     name = "tailwindcss-#{target()}"
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
@@ -341,6 +303,45 @@ defmodule Tailwind do
 
   defp otp_version do
     :erlang.system_info(:otp_release) |> List.to_integer()
+  end
+
+  @doc """
+  Configures asset files
+  """
+  def configure_files do
+    tailwind_config_path = Path.expand("assets/tailwind.config.js")
+
+    File.mkdir_p!("assets/css")
+
+    prepare_app_css()
+    prepare_app_js()
+
+    unless File.exists?(tailwind_config_path) do
+      File.write!(tailwind_config_path, """
+      // See the Tailwind configuration guide for advanced usage
+      // https://tailwindcss.com/docs/configuration
+
+      let plugin = require('tailwindcss/plugin')
+
+      module.exports = {
+        content: [
+          './js/**/*.js',
+          '../lib/*_web.ex',
+          '../lib/*_web/**/*.*ex'
+        ],
+        theme: {
+          extend: {},
+        },
+        plugins: [
+          require('@tailwindcss/forms'),
+          plugin(({addVariant}) => addVariant('phx-no-feedback', ['&.phx-no-feedback', '.phx-no-feedback &'])),
+          plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
+          plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
+          plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
+        ]
+      }
+      """)
+    end
   end
 
   defp prepare_app_css do
