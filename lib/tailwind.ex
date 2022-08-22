@@ -212,7 +212,7 @@ defmodule Tailwind do
   """
   def install_and_run(profile, args) do
     unless File.exists?(bin_path()) do
-      install()
+      install_tailwind()
     end
 
     run(profile, args)
@@ -222,15 +222,9 @@ defmodule Tailwind do
   Installs tailwind with `configured_version/0`.
   """
   def install do
-    version = configured_version()
-    name = "tailwindcss-#{target()}"
-    url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
-    bin_path = bin_path()
+    install_tailwind()
+
     tailwind_config_path = Path.expand("assets/tailwind.config.js")
-    binary = fetch_body!(url)
-    File.mkdir_p!(Path.dirname(bin_path))
-    File.write!(bin_path, binary, [:binary])
-    File.chmod(bin_path, 0o755)
 
     File.mkdir_p!("assets/css")
 
@@ -263,6 +257,17 @@ defmodule Tailwind do
       }
       """)
     end
+  end
+
+  defp install_tailwind do
+    version = configured_version()
+    name = "tailwindcss-#{target()}"
+    url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
+    bin_path = bin_path()
+    binary = fetch_body!(url)
+    File.mkdir_p!(Path.dirname(bin_path))
+    File.write!(bin_path, binary, [:binary])
+    File.chmod(bin_path, 0o755)
   end
 
   # Available targets:

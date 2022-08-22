@@ -30,6 +30,15 @@ defmodule TailwindTest do
            end) =~ @version
   end
 
+  test "tailwind mix task" do
+    assert ExUnit.CaptureIO.capture_io(fn ->
+             Mix.Task.rerun("tailwind", ["default"])
+           end) =~ @version
+
+    refute File.exists?("assets/tailwind.config.js")
+    refute File.exists?("assets/css/app.css")
+  end
+
   test "updates on install" do
     Application.put_env(:tailwind, :version, "3.0.3")
     Mix.Task.rerun("tailwind.install", ["--if-missing"])
