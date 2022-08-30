@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.9
+  * Use only TLS 1.2 on OTP versions less than 25.
+
 ## v0.1.8 (2022-07-14)
   * Fix generated tailwind.config.js missing plugin reference
 
