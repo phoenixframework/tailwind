@@ -14,7 +14,7 @@ in dev:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.6", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -25,7 +25,7 @@ then it only needs to be a dev dependency:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1", only: :dev}
+    {:tailwind, "~> 0.1.6", only: :dev}
   ]
 end
 ```
@@ -34,7 +34,7 @@ Once installed, change your `config/config.exs` to pick your
 tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "3.0.12"
+config :tailwind, version: "3.1.6"
 ```
 
 Now you can install tailwind by running:
@@ -61,7 +61,7 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "3.0.10",
+  version: "3.1.6",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -79,7 +79,8 @@ to the ones configured above. Note profiles must be configured in your
 
 ## Adding to Phoenix
 
-To add `tailwind` to an application using Phoenix, you need only four steps. Installation requires that Phoenix watchers can accept module-function-args tuples which is not built into Phoenix 1.5.9.
+To add `tailwind` to an application using Phoenix, you will need Phoenix v1.6+
+and the following four steps.
 
 First add it as a dependency in your `mix.exs`:
 
@@ -87,7 +88,7 @@ First add it as a dependency in your `mix.exs`:
 def deps do
   [
     {:phoenix, "~> 1.6"},
-    {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -99,7 +100,7 @@ as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "3.0.10",
+  version: "3.1.6",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -118,7 +119,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "3.0.10",
+  version: "3.1.6",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)
@@ -134,7 +135,8 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
-Check you have correctly remove the `import "../css/app.css"` line  in your `assets/js/app.js`.
+Check you have correctly removed the `import "../css/app.css"` line
+in your `assets/js/app.js`.
 
 Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
 alias for deployments, which will also use the `--minify` option:
@@ -154,8 +156,20 @@ _Note_: The stand-alone Tailwind client bundles first-class tailwind packages
 within the precompiled executable. For third-party Tailwind plugin support,
 the node package must be used. See the [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
 
+The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
+lifecycle classes:
+
+  * phx-no-feedback - applied when feedback should be hidden from the user
+  * phx-click-loading - applied when an event is sent to the server on click while the client awaits the server response
+  * phx-submit-loading - applied when a form is submitted while the client awaits the server response
+  * phx-submit-loading - applied when a form input is changed while the client awaits the server response
+
+Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
+when Phoenix LiveView classes are applied.
+
 ## License
 
+Copyright (c) 2022 Chris McCord.
 Copyright (c) 2021 Wojtek Mach, José Valim.
 
 tailwind source code is licensed under the [MIT License](LICENSE.md).

@@ -1,9 +1,9 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "3.0.12"
+  @latest_version "3.1.6"
 
   @moduledoc """
-  Tailwind is an installer and runner for [tailwind](https://tailwind.github.io).
+  Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
 
   ## Profiles
 
@@ -39,7 +39,7 @@ defmodule Tailwind do
 
   For instance, you can install `tailwind` globally with `npm`:
 
-      $ npm install -g tailwind
+      $ npm install -g tailwindcss
 
   On Unix, the executable will be at:
 
@@ -68,6 +68,18 @@ defmodule Tailwind do
   the node package must be used. See the
   [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation)
   if you require third-party plugin support.
+
+  The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
+  lifecycle classes:
+
+    * phx-no-feedback - applied when feedback should be hidden from the user
+    * phx-click-loading - applied when an event is sent to the server on click
+      while the client awaits the server response
+    * phx-submit-loading - applied when a form is submitted while the client awaits the server response
+    * phx-submit-loading - applied when a form input is changed while the client awaits the server response
+
+  Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
+  when Phoenix LiveView classes are applied.
   """
 
   use Application
@@ -124,7 +136,7 @@ defmodule Tailwind do
       unknown tailwind profile. Make sure the profile is defined in your config/config.exs file, such as:
 
           config :tailwind,
-            version: "3.0.10",
+            version: "3.1.0",
             #{profile}: [
               args: ~w(
                 --config=tailwind.config.js
@@ -229,6 +241,9 @@ defmodule Tailwind do
       File.write!(tailwind_config_path, """
       // See the Tailwind configuration guide for advanced usage
       // https://tailwindcss.com/docs/configuration
+
+      let plugin = require('tailwindcss/plugin')
+
       module.exports = {
         content: [
           './js/**/*.js',
@@ -239,7 +254,11 @@ defmodule Tailwind do
           extend: {},
         },
         plugins: [
-          require('@tailwindcss/forms')
+          require('@tailwindcss/forms'),
+          plugin(({addVariant}) => addVariant('phx-no-feedback', ['&.phx-no-feedback', '.phx-no-feedback &'])),
+          plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
+          plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
+          plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
         ]
       }
       """)
@@ -295,7 +314,8 @@ defmodule Tailwind do
         depth: 2,
         customize_hostname_check: [
           match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
-        ]
+        ],
+        versions: protocol_versions()
       ]
     ]
 
@@ -312,6 +332,14 @@ defmodule Tailwind do
 
   defp cacertfile() do
     Application.get_env(:tailwind, :cacerts_path) || CAStore.file_path()
+  end
+
+  defp protocol_versions do
+    if otp_version() < 25, do: [:"tlsv1.2"], else: [:"tlsv1.2", :"tlsv1.3"]
+  end
+
+  defp otp_version do
+    :erlang.system_info(:otp_release) |> List.to_integer()
   end
 
   defp prepare_app_css do
