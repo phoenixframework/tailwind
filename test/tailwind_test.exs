@@ -49,6 +49,14 @@ defmodule TailwindTest do
            end) =~ @version
   end
 
+  test "Download a custom binary" do
+      Application.put_env(:tailwind, :download_fn, fn version, target ->
+        "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/tailwindcss-#{target}"
+      end)
+
+      assert :ok = Tailwind.install()
+  end
+
   test "install on existing app.css and app.js" do
     File.write!("assets/css/app.css", """
     @import "./phoenix.css";
