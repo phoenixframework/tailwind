@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.10 (2022-10-20)
+  * Bump tailwindcss to v3.2.0
+
 ## v0.1.9 (2022-09-06)
   * Use only TLS 1.2 on OTP versions less than 25.
 
