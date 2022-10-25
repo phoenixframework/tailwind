@@ -50,11 +50,13 @@ defmodule TailwindTest do
   end
 
   test "Download a custom binary" do
-      Application.put_env(:tailwind, :download_fn, fn version, target ->
-        "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/tailwindcss-#{target}"
-      end)
+    Application.put_env(
+      :tailwind,
+      :download_url_base,
+      "https://github.com/tailwindlabs/tailwindcss/releases/download"
+    )
 
-      assert :ok = Tailwind.install()
+    assert :ok = Tailwind.install()
   end
 
   test "install on existing app.css and app.js" do

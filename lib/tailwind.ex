@@ -371,12 +371,14 @@ defmodule Tailwind do
     version = configured_version()
     target = target()
     name = "tailwindcss-#{target}"
-    fun = Application.get_env(:tailwind, :download_fn)
 
-    if is_function(fun) do
-      fun.(version, target)
-    else
-      "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
-    end
+    url =
+      Application.get_env(
+        :tailwind,
+        :download_url_base,
+        "https://github.com/tailwindlabs/tailwindcss/releases/download"
+      )
+
+    "#{url}/v#{version}/#{name}"
   end
 end
