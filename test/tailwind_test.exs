@@ -49,16 +49,6 @@ defmodule TailwindTest do
            end) =~ @version
   end
 
-  test "Download a custom binary" do
-    Application.put_env(
-      :tailwind,
-      :download_url_base,
-      "https://github.com/tailwindlabs/tailwindcss/releases/download"
-    )
-
-    assert :ok = Tailwind.install()
-  end
-
   test "install on existing app.css and app.js" do
     File.write!("assets/css/app.css", """
     @import "./phoenix.css";
@@ -96,5 +86,28 @@ defmodule TailwindTest do
     Mix.Task.rerun("tailwind.install")
 
     assert String.trim(File.read!("assets/js/app.js")) == expected_js
+  end
+
+  describe "Custom Downloader" do
+    defmodule CustomDownloaderRelease do
+      @behaviour Tailwind.Downloader
+      @impl true
+      def get_url(version, target) do
+        name = "tailwindcss-#{target}"
+        "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
+      end
+    end
+
+    test "Download a custom binary" do
+      Application.put_env(:tailwind, :version, "3.2.1")
+
+      Application.put_env(
+        :tailwind,
+        :downloader,
+        CustomDownloaderRelease
+      )
+
+      assert :ok = Tailwind.install()
+    end
   end
 end
