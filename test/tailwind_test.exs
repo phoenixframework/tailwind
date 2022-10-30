@@ -92,21 +92,21 @@ defmodule TailwindTest do
     defmodule CustomDownloaderRelease do
       @behaviour Tailwind.Downloader
       @impl true
-      def get_url(version, target) do
+      def build_url(version, target) do
         name = "tailwindcss-#{target}"
         "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
       end
     end
 
-    test "Download a custom binary" do
-      Application.put_env(:tailwind, :version, "3.2.1")
-
+    setup do
       Application.put_env(
         :tailwind,
         :downloader,
         CustomDownloaderRelease
       )
+    end
 
+    test "Download a custom binary" do
       assert :ok = Tailwind.install()
     end
   end

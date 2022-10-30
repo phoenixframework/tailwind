@@ -298,7 +298,6 @@ defmodule Tailwind do
   defp get_url do
     version = configured_version()
     target = target()
-    name = "tailwindcss-#{target}"
 
     module =
       Application.get_env(
@@ -307,6 +306,6 @@ defmodule Tailwind do
         Tailwind.Downloader.GithubRelease
       )
 
-    module.get_url(version, target)
+    module.build_url(version, target)
   end
 end

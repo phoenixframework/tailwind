@@ -3,7 +3,7 @@ defmodule Tailwind.Downloader do
   @type target :: String.t()
   @type url :: String.t()
 
-  @callback get_url(version, target) :: url
+  @callback build_url(version, target) :: url
 
   defmacro __using__(_opts) do
     quote do

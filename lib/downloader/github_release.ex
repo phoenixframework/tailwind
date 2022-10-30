@@ -5,7 +5,7 @@ defmodule Tailwind.Downloader.GithubRelease do
   @behaviour Tailwind.Downloader
 
   @impl true
-  def get_url(version, target) do
+  def build_url(version, target) do
     name = "tailwindcss-#{target}"
 
     "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
