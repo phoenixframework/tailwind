@@ -230,6 +230,8 @@ defmodule Tailwind do
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
 
+    # MacOS doesn't recompute code signing information if a binary
+    # is overwritten with a new version, so we force creation of a new file
     if File.exists?(bin_path) do
       File.rm!(bin_path)
     end
