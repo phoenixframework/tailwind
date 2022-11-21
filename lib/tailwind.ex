@@ -229,6 +229,11 @@ defmodule Tailwind do
     tailwind_config_path = Path.expand("assets/tailwind.config.js")
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
+
+    if File.exists?(bin_path) do
+      File.rm!(bin_path)
+    end
+
     File.write!(bin_path, binary, [:binary])
     File.chmod(bin_path, 0o755)
 
