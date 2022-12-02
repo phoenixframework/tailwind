@@ -354,7 +354,7 @@ defmodule Tailwind do
       @import "tailwindcss/components";
       @import "tailwindcss/utilities";
 
-      #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}
+      #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}\
       """)
     end
   end
