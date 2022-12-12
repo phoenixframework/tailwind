@@ -14,7 +14,7 @@ in dev:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1.6", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -25,7 +25,7 @@ then it only needs to be a dev dependency:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1.6", only: :dev}
+    {:tailwind, "~> 0.1.9", only: :dev}
   ]
 end
 ```
@@ -159,10 +159,10 @@ the node package must be used. See the [tailwind nodejs installation instruction
 The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
 lifecycle classes:
 
-  * phx-no-feedback - applied when feedback should be hidden from the user
-  * phx-click-loading - applied when an event is sent to the server on click while the client awaits the server response
-  * phx-submit-loading - applied when a form is submitted while the client awaits the server response
-  * phx-submit-loading - applied when a form input is changed while the client awaits the server response
+* `phx-no-feedback` - applied when feedback should be hidden from the user
+* `phx-click-loading` - applied when an event is sent to the server on click while the client awaits the server response
+* `phx-submit-loading` - applied when a form is submitted while the client awaits the server response
+* `phx-submit-loading` - applied when a form input is changed while the client awaits the server response
 
 Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
 when Phoenix LiveView classes are applied.
