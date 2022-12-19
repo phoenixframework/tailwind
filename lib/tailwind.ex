@@ -275,6 +275,7 @@ defmodule Tailwind do
   # Available targets:
   #  tailwindcss-linux-arm64
   #  tailwindcss-linux-x64
+  #  tailwindcss-linux-armv7
   #  tailwindcss-macos-arm64
   #  tailwindcss-macos-x64
   #  tailwindcss-windows-x64.exe
