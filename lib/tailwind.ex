@@ -275,6 +275,7 @@ defmodule Tailwind do
   # Available targets:
   #  tailwindcss-linux-arm64
   #  tailwindcss-linux-x64
+  #  tailwindcss-linux-armv7
   #  tailwindcss-macos-arm64
   #  tailwindcss-macos-x64
   #  tailwindcss-windows-x64.exe
@@ -287,6 +288,7 @@ defmodule Tailwind do
       {{:unix, :darwin}, arch, 64} when arch in ~w(arm aarch64) -> "macos-arm64"
       {{:unix, :darwin}, "x86_64", 64} -> "macos-x64"
       {{:unix, :linux}, "aarch64", 64} -> "linux-arm64"
+      {{:unix, :linux}, "arm", 32} -> "linux-armv7"
       {{:unix, _osname}, arch, 64} when arch in ~w(x86_64 amd64) -> "linux-x64"
       {_os, _arch, _wordsize} -> raise "tailwind is not available for architecture: #{arch_str}"
     end
