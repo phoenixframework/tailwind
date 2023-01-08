@@ -80,7 +80,7 @@ to the ones configured above. Note profiles must be configured in your
 ## Adding to Phoenix
 
 To add `tailwind` to an application using Phoenix, you will need Phoenix v1.6+
-and the following four steps.
+and the following steps.
 
 First add it as a dependency in your `mix.exs`:
 
@@ -91,6 +91,13 @@ def deps do
     {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev}
   ]
 end
+```
+
+Also, in `mix.exs`, add `tailwind` to the `assets.deploy`
+alias for deployments (with the `--minify` option):
+
+```elixir
+"assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
 ```
 
 Now let's change `config/config.exs` to tell `tailwind` to use
@@ -135,15 +142,17 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
-Check you have correctly removed the `import "../css/app.css"` line
-in your `assets/js/app.js`.
+Finally, run the command:
 
-Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
-alias for deployments, which will also use the `--minify` option:
-
-```elixir
-"assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
+```bash
+$ mix tailwind.install
 ```
+
+This command installs Tailwind and  updates your `assets/css/app.css`
+and `assets/js/app.js` with the necessary changes to start using Tailwind
+right away. It also generates a default configuration file called
+`assets/tailwind.config.js` for you. This is the file we referenced
+when we configured `tailwind` in `config/config.exs`.
 
 ## Tailwind Configuration
 
