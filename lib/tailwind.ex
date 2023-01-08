@@ -312,7 +312,7 @@ defmodule Tailwind do
     end
 
     # https://erlef.github.io/security-wg/secure_coding_and_deployment_hardening/inets
-    cacertfile = CAStore.file_path() |> String.to_charlist()
+    cacertfile = cacertfile() |> String.to_charlist()
 
     http_options = [
       ssl: [
@@ -335,6 +335,10 @@ defmodule Tailwind do
       other ->
         raise "couldn't fetch #{url}: #{inspect(other)}"
     end
+  end
+
+  defp cacertfile() do
+    Application.get_env(:tailwind, :cacerts_path) || CAStore.file_path()
   end
 
   defp protocol_versions do
