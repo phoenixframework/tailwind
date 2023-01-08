@@ -5,9 +5,10 @@
 Mix tasks for installing and invoking [tailwindcss](https://tailwindcss.com) via the
 stand-alone [tailwindcss cli](https://github.com/tailwindlabs/tailwindcss/tree/master/standalone-cli)
 
-_Note_: The stand-alone Tailwind client bundles first-class tailwind packages
+_Note_: The stand-alone Tailwind client bundles first-class Tailwind packages
 within the precompiled executable. For third-party Tailwind plugin support (e.g. DaisyUI),
-the node package must be used. See the [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
+the node package must be used. See the [Tailwind Node.js installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
+
 ## Installation
 
 If you are going to build assets in production, then you add
