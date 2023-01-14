@@ -88,26 +88,13 @@ defmodule TailwindTest do
     assert String.trim(File.read!("assets/js/app.js")) == expected_js
   end
 
-  describe "Custom Downloader" do
-    defmodule CustomDownloaderRelease do
-      @behaviour Tailwind.Downloader
-      @impl true
-      def build_url(version, target) do
-        name = "tailwindcss-#{target}"
-        "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
-      end
+  describe "Download custom binary" do
+    test "appends the version and architecture to the base URL" do
+      assert :ok = Mix.Task.rerun("tailwind.install", ["https://github.com/tailwindlabs/tailwindcss/releases/download/"])
     end
 
-    setup do
-      Application.put_env(
-        :tailwind,
-        :downloader,
-        CustomDownloaderRelease
-      )
-    end
-
-    test "Download a custom binary" do
-      assert :ok = Tailwind.install()
+    test "No appends the version and architecture to the URL" do
+      assert :ok = Mix.Task.rerun("tailwind.install", ["https://github.com/tailwindlabs/tailwindcss/releases/download/v3.2.2/tailwindcss-macos-x64"])
     end
   end
 end

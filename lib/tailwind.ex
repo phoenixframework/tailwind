@@ -385,7 +385,11 @@ defmodule Tailwind do
     version = configured_version()
     target = target()
 
-    "#{base_url}/v#{version}/tailwindcss-#{target}"
+    if String.ends_with?(base_url, "/") do
+      "#{base_url}v#{version}/tailwindcss-#{target}"
+    else
+      base_url
+    end
   end
 
   defp default_base_url do
