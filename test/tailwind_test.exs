@@ -99,7 +99,7 @@ defmodule TailwindTest do
     test "No appends the version and architecture to the URL" do
       assert :ok =
                Mix.Task.rerun("tailwind.install", [
-                 "https://github.com/tailwindlabs/tailwindcss/releases/download/v3.2.2/tailwindcss-macos-x64"
+                 "https://github.com/tailwindlabs/tailwindcss/releases/download/v3.2.2/tailwindcss-linux-arm64"
                ])
     end
   end

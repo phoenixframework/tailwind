@@ -270,13 +270,17 @@ defmodule Tailwind do
     end
   end
 
-  # Available targets:
-  #  tailwindcss-linux-arm64
-  #  tailwindcss-linux-x64
-  #  tailwindcss-linux-armv7
-  #  tailwindcss-macos-arm64
-  #  tailwindcss-macos-x64
-  #  tailwindcss-windows-x64.exe
+  def available_targets do
+    ~w(
+    tailwindcss-linux-arm64
+    tailwindcss-linux-x64
+    tailwindcss-linux-armv7
+    tailwindcss-macos-arm64
+    tailwindcss-macos-x64
+    tailwindcss-windows-x64.exe
+    )
+  end
+
   defp target do
     arch_str = :erlang.system_info(:system_architecture)
     [arch | _] = arch_str |> List.to_string() |> String.split("-")
@@ -384,11 +388,16 @@ defmodule Tailwind do
     version = configured_version()
     target = target()
 
-    if String.ends_with?(base_url, "/") do
+    if String.ends_with?(base_url, "/") and
+         not contains_binary_name?(base_url, available_targets()) do
       "#{base_url}v#{version}/tailwindcss-#{target}"
     else
       base_url
     end
+  end
+
+  defp contains_binary_name?(base_url, targets) do
+    Enum.any?(targets, &String.contains?(base_url, &1))
   end
 
   defp default_base_url do
