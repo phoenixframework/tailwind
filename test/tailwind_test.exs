@@ -90,11 +90,17 @@ defmodule TailwindTest do
 
   describe "Download custom binary" do
     test "appends the version and architecture to the base URL" do
-      assert :ok = Mix.Task.rerun("tailwind.install", ["https://github.com/tailwindlabs/tailwindcss/releases/download/"])
+      assert :ok =
+               Mix.Task.rerun("tailwind.install", [
+                 "https://github.com/tailwindlabs/tailwindcss/releases/download/"
+               ])
     end
 
     test "No appends the version and architecture to the URL" do
-      assert :ok = Mix.Task.rerun("tailwind.install", ["https://github.com/tailwindlabs/tailwindcss/releases/download/v3.2.2/tailwindcss-macos-x64"])
+      assert :ok =
+               Mix.Task.rerun("tailwind.install", [
+                 "https://github.com/tailwindlabs/tailwindcss/releases/download/v3.2.2/tailwindcss-macos-x64"
+               ])
     end
   end
 end
