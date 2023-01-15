@@ -270,17 +270,13 @@ defmodule Tailwind do
     end
   end
 
-  def available_targets do
-    ~w(
-    tailwindcss-linux-arm64
-    tailwindcss-linux-x64
-    tailwindcss-linux-armv7
-    tailwindcss-macos-arm64
-    tailwindcss-macos-x64
-    tailwindcss-windows-x64.exe
-    )
-  end
-
+  # Available targets:
+  # tailwindcss-linux-arm64
+  # tailwindcss-linux-x64
+  # tailwindcss-linux-armv7
+  # tailwindcss-macos-arm64
+  # tailwindcss-macos-x64
+  # tailwindcss-windows-x64.exe
   defp target do
     arch_str = :erlang.system_info(:system_architecture)
     [arch | _] = arch_str |> List.to_string() |> String.split("-")
@@ -385,22 +381,12 @@ defmodule Tailwind do
   end
 
   defp get_url(base_url) do
-    version = configured_version()
-    target = target()
-
-    if String.ends_with?(base_url, "/") and
-         not contains_binary_name?(base_url, available_targets()) do
-      "#{base_url}v#{version}/tailwindcss-#{target}"
-    else
-      base_url
-    end
-  end
-
-  defp contains_binary_name?(base_url, targets) do
-    Enum.any?(targets, &String.contains?(base_url, &1))
+    base_url
+    |> String.replace("$version", configured_version())
+    |> String.replace("$target", target())
   end
 
   defp default_base_url do
-    "https://github.com/tailwindlabs/tailwindcss/releases/download/"
+    "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
   end
 end
