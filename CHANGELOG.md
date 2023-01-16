@@ -1,5 +1,9 @@
 # CHANGELOG
 
+* Add FreeBSD targets
+* Add armv7 targets
+* Support custom URLs for fetching prebuilt tailwind binaries
+
 ## v0.1.9 (2022-09-06)
 
 * Use only TLS 1.2 on OTP versions less than 25.
