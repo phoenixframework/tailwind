@@ -28,34 +28,31 @@ defmodule Mix.Tasks.Tailwind.Install do
   def run(args) do
     valid_options = [runtime_config: :boolean, if_missing: :boolean]
 
-    case OptionParser.parse_head!(args, strict: valid_options) do
-      {opts, []} ->
-        if opts[:runtime_config], do: Mix.Task.run("app.config")
+    {opts, base_url} =
+      case OptionParser.parse_head!(args, strict: valid_options) do
+        {opts, []} ->
+          {opts, Tailwind.default_base_url()}
 
-        if opts[:if_missing] && latest_version?() do
-          :ok
-        else
-          Tailwind.install()
-        end
+        {opts, [base_url]} ->
+          {opts, base_url}
 
-      {opts, [base_url]} ->
-        if opts[:runtime_config], do: Mix.Task.run("app.config")
+        {_, _} ->
+          Mix.raise("""
+          Invalid arguments to tailwind.install, expected one of:
 
-        if opts[:if_missing] && latest_version?() do
-          :ok
-        else
-          Tailwind.install(base_url)
-        end
+              mix tailwind.install
+              mix tailwind.install 'https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target'
+              mix tailwind.install --runtime-config
+              mix tailwind.install --if-missing
+          """)
+      end
 
-      {_, _} ->
-        Mix.raise("""
-        Invalid arguments to tailwind.install, expected one of:
+    if opts[:runtime_config], do: Mix.Task.run("app.config")
 
-            mix tailwind.install
-            mix tailwind.install 'https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target'
-            mix tailwind.install --runtime-config
-            mix tailwind.install --if-missing
-        """)
+    if opts[:if_missing] && latest_version?() do
+      :ok
+    else
+      Tailwind.install(base_url)
     end
   end
 

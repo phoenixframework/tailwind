@@ -219,6 +219,13 @@ defmodule Tailwind do
   end
 
   @doc """
+  The default URL to install Tailwind from.
+  """
+  def default_base_url do
+    "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
+  end
+
+  @doc """
   Installs tailwind with `configured_version/0`.
   """
   def install(base_url \\ default_base_url()) do
@@ -385,9 +392,5 @@ defmodule Tailwind do
     base_url
     |> String.replace("$version", configured_version())
     |> String.replace("$target", target())
-  end
-
-  defp default_base_url do
-    "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
   end
 end
