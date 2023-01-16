@@ -278,6 +278,8 @@ defmodule Tailwind do
   end
 
   # Available targets:
+  #  tailwindcss-freebsd-arm64
+  #  tailwindcss-freebsd-x64
   #  tailwindcss-linux-arm64
   #  tailwindcss-linux-x64
   #  tailwindcss-linux-armv7
@@ -292,6 +294,8 @@ defmodule Tailwind do
       {{:win32, _}, _arch, 64} -> "windows-x64.exe"
       {{:unix, :darwin}, arch, 64} when arch in ~w(arm aarch64) -> "macos-arm64"
       {{:unix, :darwin}, "x86_64", 64} -> "macos-x64"
+      {{:unix, :freebsd}, "aarch64", 64} -> "freebsd-arm64"
+      {{:unix, :freebsd}, "amd64", 64} -> "freebsd-x64"
       {{:unix, :linux}, "aarch64", 64} -> "linux-arm64"
       {{:unix, :linux}, "arm", 32} -> "linux-armv7"
       {{:unix, :linux}, "armv7" <> _, 32} -> "linux-armv7"
