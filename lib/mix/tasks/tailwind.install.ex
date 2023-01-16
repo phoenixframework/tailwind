@@ -38,11 +38,21 @@ defmodule Mix.Tasks.Tailwind.Install do
           Tailwind.install()
         end
 
+      {opts, [base_url]} ->
+        if opts[:runtime_config], do: Mix.Task.run("app.config")
+
+        if opts[:if_missing] && latest_version?() do
+          :ok
+        else
+          Tailwind.install(base_url)
+        end
+
       {_, _} ->
         Mix.raise("""
         Invalid arguments to tailwind.install, expected one of:
 
             mix tailwind.install
+            mix tailwind.install 'https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target'
             mix tailwind.install --runtime-config
             mix tailwind.install --if-missing
         """)

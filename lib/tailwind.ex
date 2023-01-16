@@ -221,10 +221,8 @@ defmodule Tailwind do
   @doc """
   Installs tailwind with `configured_version/0`.
   """
-  def install do
-    version = configured_version()
-    name = "tailwindcss-#{target()}"
-    url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v#{version}/#{name}"
+  def install(base_url \\ default_base_url()) do
+    url = get_url(base_url)
     bin_path = bin_path()
     tailwind_config_path = Path.expand("assets/tailwind.config.js")
     binary = fetch_body!(url)
@@ -380,5 +378,15 @@ defmodule Tailwind do
       {:ok, str} -> str
       {:error, _} -> ""
     end
+  end
+
+  defp get_url(base_url) do
+    base_url
+    |> String.replace("$version", configured_version())
+    |> String.replace("$target", target())
+  end
+
+  defp default_base_url do
+    "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
   end
 end
