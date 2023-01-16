@@ -52,7 +52,7 @@ defmodule Mix.Tasks.Tailwind.Install do
         Invalid arguments to tailwind.install, expected one of:
 
             mix tailwind.install
-            mix tailwind.install https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target
+            mix tailwind.install 'https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target'
             mix tailwind.install --runtime-config
             mix tailwind.install --if-missing
         """)

@@ -271,12 +271,12 @@ defmodule Tailwind do
   end
 
   # Available targets:
-  # tailwindcss-linux-arm64
-  # tailwindcss-linux-x64
-  # tailwindcss-linux-armv7
-  # tailwindcss-macos-arm64
-  # tailwindcss-macos-x64
-  # tailwindcss-windows-x64.exe
+  #  tailwindcss-linux-arm64
+  #  tailwindcss-linux-x64
+  #  tailwindcss-linux-armv7
+  #  tailwindcss-macos-arm64
+  #  tailwindcss-macos-x64
+  #  tailwindcss-windows-x64.exe
   defp target do
     arch_str = :erlang.system_info(:system_architecture)
     [arch | _] = arch_str |> List.to_string() |> String.split("-")
