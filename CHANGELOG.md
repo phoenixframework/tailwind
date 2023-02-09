@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v0.1.10 (2023-02-09)
+* Declare inets and ssl for latest elixir support
 * Add FreeBSD targets
 * Add armv7 targets
 * Support custom URLs for fetching prebuilt tailwind binaries
