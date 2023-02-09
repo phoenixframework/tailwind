@@ -24,17 +24,13 @@ defmodule Tailwind.MixProject do
         source_ref: "v#{@version}",
         extras: ["CHANGELOG.md"]
       ],
-      xref: [
-        exclude: [:httpc, :public_key]
-      ],
       aliases: [test: ["tailwind.install --if-missing", "test"]]
     ]
   end
 
   def application do
     [
-      # inets/ssl may be used by Mix tasks but we should not impose them.
-      extra_applications: [:logger],
+      extra_applications: [:logger, :inets, :ssl],
       mod: {Tailwind, []},
       env: [default: []]
     ]
