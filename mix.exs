@@ -1,14 +1,14 @@
 defmodule Tailwind.MixProject do
   use Mix.Project
 
-  @version "0.1.10"
+  @version "0.2.0-dev"
   @source_url "https://github.com/phoenixframework/tailwind"
 
   def project do
     [
       app: :tailwind,
       version: @version,
-      elixir: "~> 1.10",
+      elixir: "~> 1.11",
       deps: deps(),
       description: "Mix tasks for installing and invoking tailwind",
       package: [
@@ -30,7 +30,7 @@ defmodule Tailwind.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :inets, :ssl],
+      extra_applications: [:logger, inets: :optional, ssl: :optional],
       mod: {Tailwind, []},
       env: [default: []]
     ]

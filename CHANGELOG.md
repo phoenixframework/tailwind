@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.2.0-dev
+* Require Elixir v1.11+
+
 ## v0.1.10 (2023-02-09)
 * Declare inets and ssl for latest elixir support
 * Add FreeBSD targets
