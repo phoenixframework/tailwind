@@ -53,6 +53,7 @@ defmodule Mix.Tasks.Tailwind.Install do
       :ok
     else
       Tailwind.install(base_url)
+      Tailwind.install_assets(:default)
     end
   end
 

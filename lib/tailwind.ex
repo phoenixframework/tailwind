@@ -212,7 +212,8 @@ defmodule Tailwind do
   """
   def install_and_run(profile, args) do
     unless File.exists?(bin_path()) do
-      install()
+      install(default_base_url())
+      install_assets(profile)
     end
 
     run(profile, args)
@@ -231,7 +232,6 @@ defmodule Tailwind do
   def install(base_url \\ default_base_url()) do
     url = get_url(base_url)
     bin_path = bin_path()
-    tailwind_config_path = Path.expand("assets/tailwind.config.js")
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
 
@@ -243,38 +243,51 @@ defmodule Tailwind do
 
     File.write!(bin_path, binary, [:binary])
     File.chmod(bin_path, 0o755)
+  end
 
-    File.mkdir_p!("assets/css")
+  @doc """
+  Configures assets directory files for tailwind
+  """
+  def install_assets(profile) when is_atom(profile) do
+    assets_dir = Application.get_env(:tailwind, profile, [])[:cd] || "assets/"
 
-    prepare_app_css()
-    prepare_app_js()
+    File.mkdir_p!(assets_dir)
 
-    unless File.exists?(tailwind_config_path) do
-      File.write!(tailwind_config_path, """
-      // See the Tailwind configuration guide for advanced usage
-      // https://tailwindcss.com/docs/configuration
+    File.cd!(assets_dir, fn ->
+      tailwind_config_path = Path.expand("tailwind.config.js")
 
-      let plugin = require('tailwindcss/plugin')
+      File.mkdir_p!("css")
 
-      module.exports = {
-        content: [
-          './js/**/*.js',
-          '../lib/*_web.ex',
-          '../lib/*_web/**/*.*ex'
-        ],
-        theme: {
-          extend: {},
-        },
-        plugins: [
-          require('@tailwindcss/forms'),
-          plugin(({addVariant}) => addVariant('phx-no-feedback', ['&.phx-no-feedback', '.phx-no-feedback &'])),
-          plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
-          plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
-          plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
-        ]
-      }
-      """)
-    end
+      prepare_app_css()
+      prepare_app_js()
+
+      unless File.exists?(tailwind_config_path) do
+        File.write!(tailwind_config_path, """
+        // See the Tailwind configuration guide for advanced usage
+        // https://tailwindcss.com/docs/configuration
+
+        let plugin = require('tailwindcss/plugin')
+
+        module.exports = {
+          content: [
+            './js/**/*.js',
+            '../lib/*_web.ex',
+            '../lib/*_web/**/*.*ex'
+          ],
+          theme: {
+            extend: {},
+          },
+          plugins: [
+            require('@tailwindcss/forms'),
+            plugin(({addVariant}) => addVariant('phx-no-feedback', ['&.phx-no-feedback', '.phx-no-feedback &'])),
+            plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
+            plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
+            plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
+          ]
+        }
+        """)
+      end
+    end)
   end
 
   # Available targets:
@@ -365,7 +378,7 @@ defmodule Tailwind do
     app_css = app_css()
 
     unless app_css =~ "tailwind" do
-      File.write!("assets/css/app.css", """
+      File.write!("css/app.css", """
       @import "tailwindcss/base";
       @import "tailwindcss/components";
       @import "tailwindcss/utilities";
@@ -376,9 +389,9 @@ defmodule Tailwind do
   end
 
   defp prepare_app_js do
-    case File.read("assets/js/app.js") do
+    case File.read("js/app.js") do
       {:ok, app_js} ->
-        File.write!("assets/js/app.js", String.replace(app_js, ~s|import "../css/app.css"\n|, ""))
+        File.write!("js/app.js", String.replace(app_js, ~s|import "../css/app.css"\n|, ""))
 
       {:error, _} ->
         :ok
@@ -386,7 +399,7 @@ defmodule Tailwind do
   end
 
   defp app_css do
-    case File.read("assets/css/app.css") do
+    case File.read("css/app.css") do
       {:ok, str} -> str
       {:error, _} -> ""
     end

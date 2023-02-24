@@ -94,4 +94,13 @@ defmodule TailwindTest do
                "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
              ])
   end
+
+  test "runs install with custom :cd" do
+    File.rm!(Tailwind.bin_path())
+    Application.put_env(:tailwind, :default, [cd: "custom/path/"])
+    Mix.Task.rerun("tailwind", ["default"])
+
+    assert File.exists?("custom/path/tailwind.config.js")
+    assert File.read!("custom/path/css/app.css") =~ "tailwind"
+  end
 end
