@@ -305,38 +305,36 @@ defmodule Tailwind do
   end
 
   defp fetch_body!(url) do
+    scheme = URI.parse(url).scheme
     url = String.to_charlist(url)
     Logger.debug("Downloading tailwind from #{url}")
 
     {:ok, _} = Application.ensure_all_started(:inets)
     {:ok, _} = Application.ensure_all_started(:ssl)
 
-    if proxy = System.get_env("HTTP_PROXY") || System.get_env("http_proxy") do
-      Logger.debug("Using HTTP_PROXY: #{proxy}")
+    if proxy = proxy_for_scheme(scheme) do
       %{host: host, port: port} = URI.parse(proxy)
-      :httpc.set_options([{:proxy, {{String.to_charlist(host), port}, []}}])
-    end
-
-    if proxy = System.get_env("HTTPS_PROXY") || System.get_env("https_proxy") do
-      Logger.debug("Using HTTPS_PROXY: #{proxy}")
-      %{host: host, port: port} = URI.parse(proxy)
-      :httpc.set_options([{:https_proxy, {{String.to_charlist(host), port}, []}}])
+      Logger.debug("Using #{String.upcase(scheme)}_PROXY: #{proxy}")
+      set_option = if "https" == scheme, do: :https_proxy, else: :proxy
+      :httpc.set_options([{set_option, {{String.to_charlist(host), port}, []}}])
     end
 
     # https://erlef.github.io/security-wg/secure_coding_and_deployment_hardening/inets
     cacertfile = cacertfile() |> String.to_charlist()
 
-    http_options = [
-      ssl: [
-        verify: :verify_peer,
-        cacertfile: cacertfile,
-        depth: 2,
-        customize_hostname_check: [
-          match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
-        ],
-        versions: protocol_versions()
+    http_options =
+      [
+        ssl: [
+          verify: :verify_peer,
+          cacertfile: cacertfile,
+          depth: 2,
+          customize_hostname_check: [
+            match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
+          ],
+          versions: protocol_versions()
+        ]
       ]
-    ]
+      |> maybe_add_proxy_auth(scheme)
 
     options = [body_format: :binary]
 
@@ -346,6 +344,31 @@ defmodule Tailwind do
 
       other ->
         raise "couldn't fetch #{url}: #{inspect(other)}"
+    end
+  end
+
+  defp proxy_for_scheme("http") do
+    System.get_env("HTTP_PROXY") || System.get_env("http_proxy")
+  end
+
+  defp proxy_for_scheme("https") do
+    System.get_env("HTTPS_PROXY") || System.get_env("https_proxy")
+  end
+
+  defp maybe_add_proxy_auth(http_options, scheme) do
+    case proxy_auth(scheme) do
+      nil -> http_options
+      auth -> [{:proxy_auth, auth} | http_options]
+    end
+  end
+
+  defp proxy_auth(scheme) do
+    with proxy when is_binary(proxy) <- proxy_for_scheme(scheme),
+         %{userinfo: userinfo} when is_binary(userinfo) <- URI.parse(proxy),
+         [username, password] <- String.split(userinfo, ":") do
+      {String.to_charlist(username), String.to_charlist(password)}
+    else
+      _ -> nil
     end
   end
 
