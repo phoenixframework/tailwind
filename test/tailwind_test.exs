@@ -87,4 +87,11 @@ defmodule TailwindTest do
 
     assert String.trim(File.read!("assets/js/app.js")) == expected_js
   end
+
+  test "installs with custom URL" do
+    assert :ok =
+             Mix.Task.rerun("tailwind.install", [
+               "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
+             ])
+  end
 end

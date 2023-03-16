@@ -1,15 +1,14 @@
 defmodule Tailwind.MixProject do
   use Mix.Project
 
-  @version "0.1.5"
+  @version "0.2.0-dev"
   @source_url "https://github.com/phoenixframework/tailwind"
 
   def project do
     [
       app: :tailwind,
       version: @version,
-      elixir: "~> 1.10",
-      otp: ">= 22.0",
+      elixir: "~> 1.11",
       deps: deps(),
       description: "Mix tasks for installing and invoking tailwind",
       package: [
@@ -25,17 +24,13 @@ defmodule Tailwind.MixProject do
         source_ref: "v#{@version}",
         extras: ["CHANGELOG.md"]
       ],
-      xref: [
-        exclude: [:httpc, :public_key]
-      ],
       aliases: [test: ["tailwind.install --if-missing", "test"]]
     ]
   end
 
   def application do
     [
-      # inets/ssl may be used by Mix tasks but we should not impose them.
-      extra_applications: [:logger],
+      extra_applications: [:logger, inets: :optional, ssl: :optional],
       mod: {Tailwind, []},
       env: [default: []]
     ]

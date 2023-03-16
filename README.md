@@ -7,7 +7,8 @@ stand-alone [tailwindcss cli](https://github.com/tailwindlabs/tailwindcss/tree/m
 
 _Note_: The stand-alone Tailwind client bundles first-class Tailwind packages
 within the precompiled executable. For third-party Tailwind plugin support (e.g. DaisyUI),
-the node package must be used. See the [Tailwind Node.js installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
+the node package must be used. See the [Tailwind Node.js installation instructions](https://tailwindcss.com/docs/installation)
+if you require third-party plugin support.
 
 ## Installation
 
@@ -18,7 +19,7 @@ in dev:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -29,7 +30,7 @@ then it only needs to be a dev dependency:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1", only: :dev}
+    {:tailwind, "~> 0.1.9", only: :dev}
   ]
 end
 ```
@@ -38,13 +39,21 @@ Once installed, change your `config/config.exs` to pick your
 tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "3.0.12"
+config :tailwind, version: "3.2.4"
 ```
 
 Now you can install tailwind by running:
 
 ```bash
 $ mix tailwind.install
+```
+
+or if your platform isn't officially supported by Tailwind,
+you can supply a third party path to the binary the installer wants
+(beware that we cannot guarantee the compatibility of any third party executable):
+
+```bash
+$ mix tailwind.install https://people.freebsd.org/~dch/pub/tailwind/v3.2.6/tailwindcss-freebsd-x64
 ```
 
 And invoke tailwind with:
@@ -65,7 +74,7 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "3.0.10",
+  version: "3.2.4",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -83,7 +92,8 @@ to the ones configured above. Note profiles must be configured in your
 
 ## Adding to Phoenix
 
-To add `tailwind` to an application using Phoenix, you need only four steps. Installation requires that Phoenix watchers can accept module-function-args tuples which is not built into Phoenix 1.5.9.
+To add `tailwind` to an application using Phoenix, you will need Phoenix v1.6+
+and the following steps.
 
 First add it as a dependency in your `mix.exs`:
 
@@ -91,9 +101,16 @@ First add it as a dependency in your `mix.exs`:
 def deps do
   [
     {:phoenix, "~> 1.6"},
-    {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev}
   ]
 end
+```
+
+Also, in `mix.exs`, add `tailwind` to the `assets.deploy`
+alias for deployments (with the `--minify` option):
+
+```elixir
+"assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
 ```
 
 Now let's change `config/config.exs` to tell `tailwind` to use
@@ -103,7 +120,7 @@ as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "3.0.10",
+  version: "3.2.4",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -122,7 +139,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "3.0.10",
+  version: "3.2.4",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)
@@ -138,24 +155,22 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
-Check you have correctly remove the `import "../css/app.css"` line  in your `assets/js/app.js`.
+Finally, run the command:
 
-Finally, back in your `mix.exs`, make sure you have a `assets.deploy`
-alias for deployments, which will also use the `--minify` option:
-
-```elixir
-"assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
+```bash
+$ mix tailwind.install
 ```
 
-## Tailwind Configuration
-
-The first time this package is installed, a default tailwind configuration
-will be placed in a new `assets/tailwind.config.js` file. See
-the [tailwind documentation](https://tailwindcss.com/docs/configuration)
-on configuration options.
+This command installs Tailwind and  updates your `assets/css/app.css`
+and `assets/js/app.js` with the necessary changes to start using Tailwind
+right away. It also generates a default configuration file called
+`assets/tailwind.config.js` for you. This is the file we referenced
+when we configured `tailwind` in `config/config.exs`. See
+`mix help tailwind.install` to learn more.
 
 ## License
 
+Copyright (c) 2022 Chris McCord.
 Copyright (c) 2021 Wojtek Mach, José Valim.
 
 tailwind source code is licensed under the [MIT License](LICENSE.md).
