@@ -28,6 +28,9 @@ defmodule Tailwind do
 
     * `:version` - the expected tailwind version
 
+    * `:cacerts_path` - the directory to find certificates for
+      https connections
+
     * `:path` - the path to find the tailwind executable at. By
       default, it is automatically downloaded and placed inside
       the `_build` directory of your current app
@@ -294,10 +297,13 @@ defmodule Tailwind do
         This typically means we cannot reach the source or you are behind a proxy.
         You can try again later and, if that does not work, you might:
 
-          1. Manually download the executable from the URL above and
+          1. If behind a proxy, ensure your proxy is configured and that
+             your certificates are set via the cacerts_path configuration
+
+          2. Manually download the executable from the URL above and
              place it inside "_build/tailwind-#{target()}"
 
-          2. Install and use Tailwind from npmJS. See our module documentation
+          3. Install and use Tailwind from npmJS. See our module documentation
              to learn more: https://hexdocs.pm/tailwind
         """
     end
