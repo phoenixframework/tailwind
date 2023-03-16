@@ -56,14 +56,16 @@ defmodule Tailwind do
   `MIX_TAILWIND_PATH` environment variable, which you can then read in
   your configuration file:
 
-      config :tailwind, path: System.get_env("")
+      config :tailwind, path: System.get_env("MIX_TAILWIND_PATH")
+
+  ## Installation
 
   The first time this package is installed, a default tailwind configuration
   will be placed in a new `assets/tailwind.config.js` file. See
   the [tailwind documentation](https://tailwindcss.com/docs/configuration)
   on configuration options.
 
-  *Note*: The stand-alone Tailwind client bundles first-class tailwind packages
+  *Note*: The stand-alone Tailwind client bundles first-class Tailwind packages
   within the precompiled executable. For third-party Tailwind plugin support,
   the node package must be used. See the
   [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation)
