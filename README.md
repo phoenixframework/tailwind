@@ -152,29 +152,8 @@ This command installs Tailwind and  updates your `assets/css/app.css`
 and `assets/js/app.js` with the necessary changes to start using Tailwind
 right away. It also generates a default configuration file called
 `assets/tailwind.config.js` for you. This is the file we referenced
-when we configured `tailwind` in `config/config.exs`.
-
-## Tailwind Configuration
-
-The first time this package is installed, a default tailwind configuration
-will be placed in a new `assets/tailwind.config.js` file. See
-the [tailwind documentation](https://tailwindcss.com/docs/configuration)
-on configuration options.
-
-_Note_: The stand-alone Tailwind client bundles first-class tailwind packages
-within the precompiled executable. For third-party Tailwind plugin support,
-the node package must be used. See the [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation) if you require third-party plugin support.
-
-The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
-lifecycle classes:
-
-* `phx-no-feedback` - applied when feedback should be hidden from the user
-* `phx-click-loading` - applied when an event is sent to the server on click while the client awaits the server response
-* `phx-submit-loading` - applied when a form is submitted while the client awaits the server response
-* `phx-change-loading` - applied when a form input is changed while the client awaits the server response
-
-Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
-when Phoenix LiveView classes are applied.
+when we configured `tailwind` in `config/config.exs`. See
+`mix help tailwind.install` to learn more.
 
 ## License
 

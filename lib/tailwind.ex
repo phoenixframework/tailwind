@@ -58,30 +58,6 @@ defmodule Tailwind do
 
       config :tailwind, path: System.get_env("MIX_TAILWIND_PATH")
 
-  ## Installation
-
-  The first time this package is installed, a default tailwind configuration
-  will be placed in a new `assets/tailwind.config.js` file. See
-  the [tailwind documentation](https://tailwindcss.com/docs/configuration)
-  on configuration options.
-
-  *Note*: The stand-alone Tailwind client bundles first-class Tailwind packages
-  within the precompiled executable. For third-party Tailwind plugin support,
-  the node package must be used. See the
-  [tailwind nodejs installation instructions](https://tailwindcss.com/docs/installation)
-  if you require third-party plugin support.
-
-  The default tailwind configuration includes Tailwind variants for Phoenix LiveView specific
-  lifecycle classes:
-
-    * phx-no-feedback - applied when feedback should be hidden from the user
-    * phx-click-loading - applied when an event is sent to the server on click
-      while the client awaits the server response
-    * phx-submit-loading - applied when a form is submitted while the client awaits the server response
-    * phx-submit-loading - applied when a form input is changed while the client awaits the server response
-
-  Therefore, you may apply a variant, such as `phx-click-loading:animate-pulse` to customize tailwind classes
-  when Phoenix LiveView classes are applied.
   """
 
   use Application
@@ -233,7 +209,6 @@ defmodule Tailwind do
   def install(base_url \\ default_base_url()) do
     url = get_url(base_url)
     bin_path = bin_path()
-    tailwind_config_path = Path.expand("assets/tailwind.config.js")
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
 
@@ -245,38 +220,6 @@ defmodule Tailwind do
 
     File.write!(bin_path, binary, [:binary])
     File.chmod(bin_path, 0o755)
-
-    File.mkdir_p!("assets/css")
-
-    prepare_app_css()
-    prepare_app_js()
-
-    unless File.exists?(tailwind_config_path) do
-      File.write!(tailwind_config_path, """
-      // See the Tailwind configuration guide for advanced usage
-      // https://tailwindcss.com/docs/configuration
-
-      let plugin = require('tailwindcss/plugin')
-
-      module.exports = {
-        content: [
-          './js/**/*.js',
-          '../lib/*_web.ex',
-          '../lib/*_web/**/*.*ex'
-        ],
-        theme: {
-          extend: {},
-        },
-        plugins: [
-          require('@tailwindcss/forms'),
-          plugin(({addVariant}) => addVariant('phx-no-feedback', ['&.phx-no-feedback', '.phx-no-feedback &'])),
-          plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
-          plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
-          plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
-        ]
-      }
-      """)
-    end
   end
 
   # Available targets:
@@ -345,7 +288,18 @@ defmodule Tailwind do
         body
 
       other ->
-        raise "couldn't fetch #{url}: #{inspect(other)}"
+        raise """
+        Couldn't fetch #{url}: #{inspect(other)}
+
+        This typically means we cannot reach the source or you are behind a proxy.
+        You can try again later and, if that does not work, you might:
+
+          1. Manually download the executable from the URL above and
+             place it inside "_build/tailwind-#{target()}"
+
+          2. Install and use Tailwind from npmJS. See our module documentation
+             to learn more: https://hexdocs.pm/tailwind
+        """
     end
   end
 
@@ -384,37 +338,6 @@ defmodule Tailwind do
 
   defp otp_version do
     :erlang.system_info(:otp_release) |> List.to_integer()
-  end
-
-  defp prepare_app_css do
-    app_css = app_css()
-
-    unless app_css =~ "tailwind" do
-      File.write!("assets/css/app.css", """
-      @import "tailwindcss/base";
-      @import "tailwindcss/components";
-      @import "tailwindcss/utilities";
-
-      #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}\
-      """)
-    end
-  end
-
-  defp prepare_app_js do
-    case File.read("assets/js/app.js") do
-      {:ok, app_js} ->
-        File.write!("assets/js/app.js", String.replace(app_js, ~s|import "../css/app.css"\n|, ""))
-
-      {:error, _} ->
-        :ok
-    end
-  end
-
-  defp app_css do
-    case File.read("assets/css/app.css") do
-      {:ok, str} -> str
-      {:error, _} -> ""
-    end
   end
 
   defp get_url(base_url) do
