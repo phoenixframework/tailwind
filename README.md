@@ -42,7 +42,11 @@ Now you can install tailwind by running:
 ```bash
 $ mix tailwind.install
 ```
-or if your platform isn't officially supported by tailwind, you can supply a third party path to the binary the installer wants:
+
+or if your platform isn't officially supported by Tailwind,
+you can supply a third party path to the binary the installer wants
+(beware that we cannot guarantee the compatibility of any third party executable):
+
 ```bash
 $ mix tailwind.install https://people.freebsd.org/~dch/pub/tailwind/v3.2.6/tailwindcss-freebsd-x64
 ```
