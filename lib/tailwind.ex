@@ -174,9 +174,13 @@ defmodule Tailwind do
     config = config_for!(profile)
     args = config[:args] || []
 
+    env =
+      Keyword.get(config, :env, %{})
+      |> add_env_variable_to_ignore_browserslist_outdated_warning()
+
     opts = [
       cd: config[:cd] || File.cwd!(),
-      env: config[:env] || %{},
+      env: env,
       into: IO.stream(:stdio, :line),
       stderr_to_stdout: true
     ]
@@ -184,6 +188,10 @@ defmodule Tailwind do
     bin_path()
     |> System.cmd(args ++ extra_args, opts)
     |> elem(1)
+  end
+
+  defp add_env_variable_to_ignore_browserslist_outdated_warning(env) do
+    Enum.into(env, %{"BROWSERSLIST_IGNORE_OLD_DATA" => "1"})
   end
 
   @doc """
