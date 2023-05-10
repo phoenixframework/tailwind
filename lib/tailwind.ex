@@ -135,7 +135,7 @@ defmodule Tailwind do
   The executable may not be available if it was not yet installed.
   """
   def bin_path do
-    name = "tailwind-#{target()}"
+    name = "tailwindcss-#{target()}"
 
     Application.get_env(:tailwind, :path) ||
       if Code.ensure_loaded?(Mix.Project) do
