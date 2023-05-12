@@ -175,7 +175,8 @@ defmodule Tailwind do
     args = config[:args] || []
 
     env =
-      Keyword.get(config, :env, %{})
+      config
+      |> Keyword.get(:env, %{})
       |> add_env_variable_to_ignore_browserslist_outdated_warning()
 
     opts = [
