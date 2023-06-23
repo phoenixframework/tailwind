@@ -41,6 +41,8 @@ defmodule Mix.Tasks.Tailwind.Install do
   """
 
   @shortdoc "Installs Tailwind executable and assets"
+  @compile {:no_warn_undefined, Mix}
+
   use Mix.Task
 
   @impl true

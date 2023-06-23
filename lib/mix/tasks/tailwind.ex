@@ -29,6 +29,7 @@ defmodule Mix.Tasks.Tailwind do
   """
 
   @shortdoc "Invokes tailwind with the profile and args"
+  @compile {:no_warn_undefined, Mix}
 
   use Mix.Task
 
