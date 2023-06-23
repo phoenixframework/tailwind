@@ -19,7 +19,7 @@ in dev:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.2", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -30,7 +30,7 @@ then it only needs to be a dev dependency:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.1.9", only: :dev}
+    {:tailwind, "~> 0.2", only: :dev}
   ]
 end
 ```
