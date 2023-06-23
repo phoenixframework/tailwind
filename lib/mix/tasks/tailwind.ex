@@ -39,6 +39,7 @@ defmodule Mix.Tasks.Tailwind do
 
     if function_exported?(Mix, :ensure_application!, 1) do
       Mix.ensure_application!(:inets)
+      Mix.ensure_application!(:ssl)
     end
 
     if opts[:runtime_config] do

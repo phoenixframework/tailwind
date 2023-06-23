@@ -108,6 +108,7 @@ defmodule Mix.Tasks.Tailwind.Install do
 
       if function_exported?(Mix, :ensure_application!, 1) do
         Mix.ensure_application!(:inets)
+        Mix.ensure_application!(:ssl)
       end
 
       Tailwind.install(base_url)
