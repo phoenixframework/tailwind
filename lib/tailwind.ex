@@ -69,7 +69,7 @@ defmodule Tailwind do
   @doc false
   def start(_, _) do
     unless Application.get_env(:tailwind, :version) do
-      Logger.warn("""
+      Logger.warning("""
       tailwind version is not configured. Please set it in your config files:
 
           config :tailwind, :version, "#{latest_version()}"
@@ -83,7 +83,7 @@ defmodule Tailwind do
         :ok
 
       {:ok, version} ->
-        Logger.warn("""
+        Logger.warning("""
         Outdated tailwind version. Expected #{configured_version}, got #{version}. \
         Please run `mix tailwind.install` or update the version in your config files.\
         """)
