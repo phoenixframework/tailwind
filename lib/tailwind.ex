@@ -326,7 +326,7 @@ defmodule Tailwind do
     get_and_sanitize_env_var("HTTPS_PROXY") || get_and_sanitize_env_var("https_proxy")
   end
 
-  def get_and_sanitize_env_var(env_var) do
+  defp get_and_sanitize_env_var(env_var) do
     trimmed =
       case System.get_env(env_var) do
         nil -> nil
