@@ -319,11 +319,24 @@ defmodule Tailwind do
   end
 
   defp proxy_for_scheme("http") do
-    System.get_env("HTTP_PROXY") || System.get_env("http_proxy")
+    get_and_sanitize_env_var("HTTP_PROXY") || get_and_sanitize_env_var("http_proxy")
   end
 
   defp proxy_for_scheme("https") do
-    System.get_env("HTTPS_PROXY") || System.get_env("https_proxy")
+    get_and_sanitize_env_var("HTTPS_PROXY") || get_and_sanitize_env_var("https_proxy")
+  end
+
+  def get_and_sanitize_env_var(env_var) do
+    trimmed =
+      case System.get_env(env_var) do
+        nil -> nil
+        x -> String.trim(x)
+      end
+
+    case trimmed do
+      "" -> nil
+      _ -> trimmed
+    end
   end
 
   defp maybe_add_proxy_auth(http_options, scheme) do
