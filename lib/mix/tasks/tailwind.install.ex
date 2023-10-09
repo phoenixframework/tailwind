@@ -113,6 +113,7 @@ defmodule Mix.Tasks.Tailwind.Install do
         Mix.ensure_application!(:ssl)
       end
 
+      Mix.Task.run("loadpaths")
       Tailwind.install(base_url)
     end
   end
