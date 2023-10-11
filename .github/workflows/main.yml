@@ -47,7 +47,6 @@ jobs:
         if: ${{ matrix.lint }}
 
       - run: mix test
-        if: ${{ ! matrix.lint }}
 
       - run: mix test --warnings-as-errors
         if: ${{ matrix.lint }}
