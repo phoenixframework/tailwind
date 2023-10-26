@@ -24,7 +24,7 @@ defmodule Tailwind do
 
   ## Tailwind configuration
 
-  There are two global configurations for the tailwind application:
+  There are three global configurations for the tailwind application:
 
     * `:version` - the expected tailwind version
 
@@ -46,14 +46,13 @@ defmodule Tailwind do
 
   On Unix, the executable will be at:
 
-      NPM_ROOT/tailwind/node_modules/tailwind-TARGET/bin/tailwind
+      NPM_PREFIX/bin/tailwind
 
   On Windows, it will be at:
 
-      NPM_ROOT/tailwind/node_modules/tailwind-windows-(32|64)/tailwind.exe
+      NPM_PREFIX/tailwind.cmd
 
-  Where `NPM_ROOT` is the result of `npm root -g` and `TARGET` is your system
-  target architecture.
+  Where `NPM_PREFIX` is the result of `npm prefix -g`.
 
   Once you find the location of the executable, you can store it in a
   `MIX_TAILWIND_PATH` environment variable, which you can then read in
