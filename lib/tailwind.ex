@@ -50,7 +50,7 @@ defmodule Tailwind do
 
   On Windows, it will be at:
 
-      NPM_PREFIX/tailwind.(cmd|ps1)
+      NPM_PREFIX\tailwind.(cmd|ps1)
 
   Where `NPM_PREFIX` is the result of `npm prefix -g`.
 
