@@ -47,6 +47,7 @@ defmodule Mix.Tasks.Tailwind do
       Mix.Task.run("app.config")
     else
       Mix.Task.run("loadpaths")
+      Application.ensure_all_started(:tailwind)
     end
 
     Mix.Task.reenable("tailwind")
