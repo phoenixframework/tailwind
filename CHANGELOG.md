@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.2 (2023-11-03)
+* Fix Elixir v1.16 errors where tailwind would not yet be started
+
+## v0.2.1 (2023-06-26)
+* Support Elixir v1.15+ by ensuring inets and ssl are available even on `runtime: false`
+
 ## v0.2.0 (2023-03-16)
 * Require Elixir v1.11+
 
