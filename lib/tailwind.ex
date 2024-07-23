@@ -68,7 +68,7 @@ defmodule Tailwind do
 
   @doc false
   def start(_, _) do
-    unless Application.get_env(:tailwind, :version) or Application.get_env(:tailwind, :path) do
+    unless Application.get_env(:tailwind, :version) || Application.get_env(:tailwind, :path) do
       Logger.warning("""
       tailwind version is not configured. Please set it in your config files:
 
@@ -106,7 +106,7 @@ defmodule Tailwind do
     default_version =
       if Application.get_env(:tailwind, :path), do: bin_version(), else: latest_version()
 
-      Application.get_env(:tailwind, :version, default_version)
+    Application.get_env(:tailwind, :version, default_version)
   end
 
   @doc """
