@@ -104,7 +104,12 @@ defmodule Tailwind do
   """
   def configured_version do
     default_version =
-      if Application.get_env(:tailwind, :path), do: bin_version(), else: latest_version()
+      with path when not is_nil(path) <- Application.get_env(:tailwind, :path),
+           {:ok, default_version} <- bin_version() do
+        default_version
+      else
+        _ -> latest_version()
+      end
 
     Application.get_env(:tailwind, :version, default_version)
   end
