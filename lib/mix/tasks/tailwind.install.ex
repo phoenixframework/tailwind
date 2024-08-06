@@ -10,6 +10,15 @@ defmodule Mix.Tasks.Tailwind.Install do
 
       config :tailwind, :version, "#{Tailwind.latest_version()}"
 
+  To install the Tailwind binary from a custom URL (e.g. if your platform isn't
+  officially supported by Tailwind), you can supply a third party path to the
+  binary (beware that we cannot guarantee the compatibility of any third party
+  executable):
+
+  ```bash
+  $ mix tailwind.install https://people.freebsd.org/~dch/pub/tailwind/v3.2.6/tailwindcss-freebsd-x64
+  ```
+
   ## Options
 
       * `--runtime-config` - load the runtime configuration
