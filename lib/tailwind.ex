@@ -28,6 +28,10 @@ defmodule Tailwind do
 
     * `:version` - the expected tailwind version
 
+    * `:version_check` - whether to perform the version check or not.
+      Useful when you manage the tailwind executable with an external
+      tool (eg. npm)
+
     * `:cacerts_path` - the directory to find certificates for
       https connections
 
@@ -68,28 +72,30 @@ defmodule Tailwind do
 
   @doc false
   def start(_, _) do
-    unless Application.get_env(:tailwind, :version) || Application.get_env(:tailwind, :path) do
-      Logger.warning("""
-      tailwind version is not configured. Please set it in your config files:
-
-          config :tailwind, :version, "#{latest_version()}"
-      """)
-    end
-
-    configured_version = configured_version()
-
-    case bin_version() do
-      {:ok, ^configured_version} ->
-        :ok
-
-      {:ok, version} ->
+    if Application.get_env(:tailwind, :version_check, true) do
+      unless Application.get_env(:tailwind, :version) do
         Logger.warning("""
-        Outdated tailwind version. Expected #{configured_version}, got #{version}. \
-        Please run `mix tailwind.install` or update the version in your config files.\
-        """)
+        tailwind version is not configured. Please set it in your config files:
 
-      :error ->
-        :ok
+            config :tailwind, :version, "#{latest_version()}"
+        """)
+      end
+
+      configured_version = configured_version()
+
+      case bin_version() do
+        {:ok, ^configured_version} ->
+          :ok
+
+        {:ok, version} ->
+          Logger.warning("""
+          Outdated tailwind version. Expected #{configured_version}, got #{version}. \
+          Please run `mix tailwind.install` or update the version in your config files.\
+          """)
+
+        :error ->
+          :ok
+      end
     end
 
     Supervisor.start_link([], strategy: :one_for_one)
@@ -103,10 +109,7 @@ defmodule Tailwind do
   Returns the configured tailwind version.
   """
   def configured_version do
-    default_version =
-      if Application.get_env(:tailwind, :path), do: bin_version(), else: latest_version()
-
-    Application.get_env(:tailwind, :version, default_version)
+    Application.get_env(:tailwind, :version, latest_version())
   end
 
   @doc """
