@@ -267,7 +267,7 @@ defmodule Tailwind do
     end
   end
 
-  defp fetch_body!(url) do
+  defp fetch_body!(url, retry \\ true) do
     scheme = URI.parse(url).scheme
     url = String.to_charlist(url)
     Logger.debug("Downloading tailwind from #{url}")
@@ -301,9 +301,15 @@ defmodule Tailwind do
 
     options = [body_format: :binary]
 
-    case :httpc.request(:get, {url, []}, http_options, options) do
-      {:ok, {{_, 200, _}, _headers, body}} ->
+    case {retry, :httpc.request(:get, {url, []}, http_options, options)} do
+      {_, {:ok, {{_, 200, _}, _headers, body}}} ->
         body
+
+      {true, {:error, {:failed_connect, [{:to_address, _}, {inet, _, reason}]}}}
+      when inet in [:inet, :inet6] and
+             reason in [:ehostunreach, :enetunreach, :eprotonosupport, :nxdomain] ->
+        :httpc.set_options(ipfamily: fallback(inet))
+        fetch_body!(url, false)
 
       other ->
         raise """
@@ -323,6 +329,9 @@ defmodule Tailwind do
         """
     end
   end
+
+  defp fallback(:inet), do: :inet6
+  defp fallback(:inet6), do: :inet
 
   defp proxy_for_scheme("http") do
     System.get_env("HTTP_PROXY") || System.get_env("http_proxy")
