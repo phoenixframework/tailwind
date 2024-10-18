@@ -1,16 +1,25 @@
 # CHANGELOG
 
-## v0.2.2
+## v0.2.3 (2024-10-18)
+
+* Add version check flag
+* Fallback to ipv4/ipv6 for unreachable hosts
+
+## v0.2.2 (2023-11-03)
+
 * Bump tailwind to 3.4.6
 * Do not check version if path explicitly configured
 
 ## v0.2.1 (2023-06-26)
+
 * Support Elixir v1.15+ by ensuring inets and ssl are available even on `runtime: false`
 
 ## v0.2.0 (2023-03-16)
+
 * Require Elixir v1.11+
 
 ## v0.1.10 (2023-02-09)
+
 * Declare inets and ssl for latest elixir support
 * Add FreeBSD targets
 * Add armv7 targets
