@@ -1,9 +1,13 @@
 # CHANGELOG
 
-## v0.2.3 (2024-10-18)
+## v0.2.4 (2024-10-18)
 
 * Add version check flag
 * Fallback to ipv4/ipv6 for unreachable hosts
+
+## v0.2.3 (2024-06-06)
+
+* Fix Elixir v1.15 deprecation warnings
 
 ## v0.2.2 (2023-11-03)
 
