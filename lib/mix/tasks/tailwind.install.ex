@@ -75,36 +75,9 @@ defmodule Mix.Tasks.Tailwind.Install do
     else
       if Keyword.get(opts, :assets, true) do
         File.mkdir_p!("assets/css")
-        tailwind_config_path = Path.expand("assets/tailwind.config.js")
 
         prepare_app_css()
         prepare_app_js()
-
-        unless File.exists?(tailwind_config_path) do
-          File.write!(tailwind_config_path, """
-          // See the Tailwind configuration guide for advanced usage
-          // https://tailwindcss.com/docs/configuration
-
-          let plugin = require('tailwindcss/plugin')
-
-          module.exports = {
-            content: [
-              './js/**/*.js',
-              '../lib/*_web.ex',
-              '../lib/*_web/**/*.*ex'
-            ],
-            theme: {
-              extend: {},
-            },
-            plugins: [
-              require('@tailwindcss/forms'),
-              plugin(({addVariant}) => addVariant('phx-click-loading', ['&.phx-click-loading', '.phx-click-loading &'])),
-              plugin(({addVariant}) => addVariant('phx-submit-loading', ['&.phx-submit-loading', '.phx-submit-loading &'])),
-              plugin(({addVariant}) => addVariant('phx-change-loading', ['&.phx-change-loading', '.phx-change-loading &']))
-            ]
-          }
-          """)
-        end
       end
 
       if function_exported?(Mix, :ensure_application!, 1) do
@@ -131,9 +104,11 @@ defmodule Mix.Tasks.Tailwind.Install do
 
     unless app_css =~ "tailwind" do
       File.write!("assets/css/app.css", """
-      @import "tailwindcss/base";
-      @import "tailwindcss/components";
-      @import "tailwindcss/utilities";
+      @import "tailwindcss";
+      @plugin "@tailwindcss/forms";
+      @variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
+      @variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
+      @variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
 
       #{String.replace(app_css, ~s|@import "./phoenix.css";\n|, "")}\
       """)
