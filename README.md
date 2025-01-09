@@ -39,7 +39,7 @@ Once installed, change your `config/config.exs` to pick your
 tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "3.2.4"
+config :tailwind, version: "4.0.0"
 ```
 
 Now you can install tailwind by running:
@@ -74,14 +74,13 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "3.2.4",
+  version: "4.0.0",
   default: [
     args: ~w(
-      --config=tailwind.config.js
       --input=css/app.css
       --output=../priv/static/assets/app.css
     ),
-    cd: Path.expand("../assets", __DIR__)
+    cd: Path.expand("..", __DIR__)
   ]
 ```
 
@@ -100,8 +99,8 @@ First add it as a dependency in your `mix.exs`:
 ```elixir
 def deps do
   [
-    {:phoenix, "~> 1.6"},
-    {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev}
+    {:phoenix, "~> 1.7"},
+    {:tailwind, "~> 0.2.4", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -120,10 +119,9 @@ as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "3.2.4",
+  version: "4.0.0",
   default: [
     args: ~w(
-      --config=tailwind.config.js
       --input=css/app.css
       --output=../priv/static/assets/app.css
     ),
@@ -139,7 +137,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "3.2.4",
+  version: "4.0.0",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)

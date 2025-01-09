@@ -7,7 +7,6 @@ defmodule TailwindTest do
     Application.put_env(:tailwind, :version, @version)
     File.mkdir_p!("assets/js")
     File.mkdir_p!("assets/css")
-    File.rm("assets/tailwind.config.js")
     File.rm("assets/css/app.css")
     :ok
   end
@@ -41,7 +40,6 @@ defmodule TailwindTest do
     Application.delete_env(:tailwind, :version)
 
     Mix.Task.rerun("tailwind.install", ["--if-missing"])
-    assert File.exists?("assets/tailwind.config.js")
     assert File.read!("assets/css/app.css") =~ "tailwind"
 
     assert ExUnit.CaptureIO.capture_io(fn ->
@@ -66,9 +64,11 @@ defmodule TailwindTest do
 
     expected_css =
       String.trim("""
-      @import "tailwindcss/base";
-      @import "tailwindcss/components";
-      @import "tailwindcss/utilities";
+      @import "tailwindcss";
+      @plugin "@tailwindcss/forms";
+      @variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
+      @variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
+      @variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
 
       body {
       }

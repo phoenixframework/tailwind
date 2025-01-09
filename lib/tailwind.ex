@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "3.4.6"
+  @latest_version "4.0.0-beta.3"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
@@ -15,7 +15,6 @@ defmodule Tailwind do
         version: "#{@latest_version}",
         default: [
           args: ~w(
-            --config=tailwind.config.js
             --input=css/app.css
             --output=../priv/static/assets/app.css
           ),
@@ -126,7 +125,6 @@ defmodule Tailwind do
             version: "#{@latest_version}",
             #{profile}: [
               args: ~w(
-                --config=tailwind.config.js
                 --input=css/app.css
                 --output=../priv/static/assets/app.css
               ),
