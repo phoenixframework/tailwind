@@ -14,21 +14,21 @@ jobs:
       matrix:
         include:
           - pair:
-              elixir: '1.11'
-              otp: 22
+              elixir: "1.11"
+              otp: "22"
           - pair:
-              elixir: '1.14'
-              otp: 25
+              elixir: "1.18"
+              otp: "27"
             lint: lint
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: deps
           key: mix-deps-${{ hashFiles('**/mix.lock') }}
