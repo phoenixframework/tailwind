@@ -30,12 +30,12 @@ defmodule TailwindTest do
   end
 
   test "updates on install" do
-    Application.put_env(:tailwind, :version, "3.0.3")
+    Application.put_env(:tailwind, :version, "3.4.17")
     Mix.Task.rerun("tailwind.install", ["--if-missing"])
 
     assert ExUnit.CaptureIO.capture_io(fn ->
              assert Tailwind.run(:default, ["--help"]) == 0
-           end) =~ "3.0.3"
+           end) =~ "3.4.17"
 
     Application.delete_env(:tailwind, :version)
 
