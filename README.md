@@ -77,8 +77,8 @@ config :tailwind,
   version: "4.0.0",
   default: [
     args: ~w(
-      --input=css/app.css
-      --output=../priv/static/assets/app.css
+      --input=assets/css/app.css
+      --output=priv/static/assets/app.css
     ),
     cd: Path.expand("..", __DIR__)
   ]
@@ -112,20 +112,19 @@ alias for deployments (with the `--minify` option):
 "assets.deploy": ["tailwind default --minify", ..., "phx.digest"]
 ```
 
-Now let's change `config/config.exs` to tell `tailwind` to use
-configuration in `assets/tailwind.config.js` for building our css
-bundle into `priv/static/assets`. We'll also give it our `assets/css/app.css`
-as our css entry point:
+Now let's change `config/config.exs` to tell `tailwind`
+to build our css bundle into `priv/static/assets`.
+We'll also give it our `assets/css/app.css` as our css entry point:
 
 ```elixir
 config :tailwind,
   version: "4.0.0",
   default: [
     args: ~w(
-      --input=css/app.css
-      --output=../priv/static/assets/app.css
+      --input=assets/css/app.css
+      --output=priv/static/assets/app.css
     ),
-    cd: Path.expand("../assets", __DIR__)
+    cd: Path.expand("..", __DIR__)
   ]
 ```
 
@@ -140,7 +139,7 @@ config :tailwind,
   version: "4.0.0",
   default: [
     args: ...,
-    cd: Path.expand("../apps/<folder_ending_with_web>/assets", __DIR__)
+    cd: Path.expand("../apps/<folder_ending_with_web>", __DIR__)
   ]
 ```
 
