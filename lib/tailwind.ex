@@ -32,9 +32,6 @@ defmodule Tailwind do
       Useful when you manage the tailwind executable with an external
       tool (eg. npm)
 
-    * `:cacerts_path` - the directory to find certificates for
-      https connections
-
     * `:path` - the path to find the tailwind executable at. By
       default, it is automatically downloaded and placed inside
       the `_build` directory of your current app
@@ -282,14 +279,11 @@ defmodule Tailwind do
       :httpc.set_options([{set_option, {{String.to_charlist(host), port}, []}}])
     end
 
-    # https://erlef.github.io/security-wg/secure_coding_and_deployment_hardening/inets
-    cacertfile = cacertfile() |> String.to_charlist()
-
     http_options =
       [
         ssl: [
           verify: :verify_peer,
-          cacertfile: cacertfile,
+          cacerts: :public_key.cacerts_get(),
           depth: 2,
           customize_hostname_check: [
             match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
@@ -319,7 +313,7 @@ defmodule Tailwind do
         You can try again later and, if that does not work, you might:
 
           1. If behind a proxy, ensure your proxy is configured and that
-             your certificates are set via the cacerts_path configuration
+             your certificates are set via OTP ca certfile overide via SSL configuration.
 
           2. Manually download the executable from the URL above and
              place it inside "_build/tailwind-#{target()}"
@@ -356,10 +350,6 @@ defmodule Tailwind do
     else
       _ -> nil
     end
-  end
-
-  defp cacertfile() do
-    Application.get_env(:tailwind, :cacerts_path) || CAStore.file_path()
   end
 
   defp protocol_versions do
