@@ -1,14 +1,14 @@
 defmodule Tailwind.MixProject do
   use Mix.Project
 
-  @version "0.2.4"
+  @version "0.3.0-dev"
   @source_url "https://github.com/phoenixframework/tailwind"
 
   def project do
     [
       app: :tailwind,
       version: @version,
-      elixir: "~> 1.11",
+      elixir: "~> 1.14",
       deps: deps(),
       description: "Mix tasks for installing and invoking tailwind",
       package: [
