@@ -36,13 +36,13 @@ end
 ```
 
 Once installed, change your `config/config.exs` to pick your
-tailwind version of choice:
+Tailwind version of choice:
 
 ```elixir
 config :tailwind, version: "4.0.0"
 ```
 
-Note that `:tailwind` 0.3+ supports tailwind v4+. If you need to use tailwind v3, use
+Note that `:tailwind` 0.3+ supports Tailwind v4+. If you need to use Tailwind v3, use
 
 ```
 {:tailwind, "~> 0.2.0", only: :dev}
@@ -50,7 +50,7 @@ Note that `:tailwind` 0.3+ supports tailwind v4+. If you need to use tailwind v3
 
 instead, and refer to [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md).
 
-Now you can install tailwind by running:
+Now you can install Tailwind by running:
 
 ```bash
 $ mix tailwind.install
@@ -64,7 +64,7 @@ you can supply a third party path to the binary the installer wants
 $ mix tailwind.install https://people.freebsd.org/~dch/pub/tailwind/v3.2.6/tailwindcss-freebsd-x64
 ```
 
-And invoke tailwind with:
+And invoke Tailwind with:
 
 ```bash
 $ mix tailwind default
@@ -103,10 +103,8 @@ Note that applications generated with Phoenix older than 1.8 still use Tailwind 
 If you're using Tailwind v3 please refer to [the README in the v0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md#adding-to-phoenix)
 instead.
 
-To add Tailwind v4 to an application using Phoenix, you will need Phoenix v1.6+
-and the following steps.
-
-First add it as a dependency in your `mix.exs`:
+To add Tailwind v4 to an application using Phoenix, first add this package
+as a dependency in your `mix.exs`:
 
 ```elixir
 def deps do
@@ -192,7 +190,7 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
      end
     ```
 
-2.  Adjust the configuration to run tailwind from the root of your repo (or the web app in an umbrella project):
+2.  Adjust the configuration to run Tailwind from the root of your repo (or the web app in an umbrella project):
 
     ```diff
      config :tailwind,
@@ -214,7 +212,7 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
 
     This allows Tailwind to automatically pick up classes from your project. Tailwind v4 does not require explicit configuration of sources.
 
-3.  Adjust the tailwind imports in your app.css
+3.  Adjust the Tailwind imports in your app.css
 
     ```diff
     -@import "tailwindcss/base";
@@ -225,7 +223,7 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
 
 4.  Follow the [Tailwind v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide) to address deprecations.
 
-5.  Optional: remove the tailwind.config.js and switch to the new CSS based configuration. For more information, see the previously mentioned upgrade guide and the [documentation on functions and directives](https://tailwindcss.com/docs/functions-and-directives).
+5.  Optional: remove the `tailwind.config.js` and switch to the new CSS based configuration. For more information, see the previously mentioned upgrade guide and the [documentation on functions and directives](https://tailwindcss.com/docs/functions-and-directives).
 
 ## License
 
