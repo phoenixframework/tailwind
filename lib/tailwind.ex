@@ -290,12 +290,6 @@ defmodule Tailwind do
       {{:unix, :linux}, "aarch64", _abi, 64} ->
         "linux-arm64"
 
-      {{:unix, :linux}, "arm", _abi, 32} ->
-        "linux-armv7"
-
-      {{:unix, :linux}, "armv7" <> _, _abi, 32} ->
-        "linux-armv7"
-
       {{:unix, _osname}, arch, "musl", 64} when arch in ~w(x86_64 amd64) ->
         "linux-x64-musl"
 
@@ -341,6 +335,18 @@ defmodule Tailwind do
     case {retry, :httpc.request(:get, {url, []}, http_options, options)} do
       {_, {:ok, {{_, 200, _}, _headers, body}}} ->
         body
+
+      {_, {:ok, {{_, 404, _}, _headers, _body}}} ->
+        raise """
+        The tailwind binary couldn't be found at: #{url}
+
+        This could mean that you're trying to install a version that does not support the detected
+        target architecture.
+
+        You can see the available files for the configured version at:
+
+        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{configured_version()}
+        """
 
       {true, {:error, {:failed_connect, [{:to_address, _}, {inet, _, reason}]}}}
       when inet in [:inet, :inet6] and
