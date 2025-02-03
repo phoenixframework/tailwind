@@ -24,7 +24,7 @@ defmodule Tailwind do
 
   ## Tailwind configuration
 
-  There are two global configurations for the tailwind application:
+  There are four global configurations for the tailwind application:
 
     * `:version` - the expected tailwind version
 
@@ -35,6 +35,10 @@ defmodule Tailwind do
     * `:path` - the path to find the tailwind executable at. By
       default, it is automatically downloaded and placed inside
       the `_build` directory of your current app
+
+    * `:target` - the target architecture for the tailwind executable.
+      For example `"linux-x64-musl"`. By default, it is automatically detected
+      based on system information.
 
   Overriding the `:path` is not recommended, as we will automatically
   download and manage `tailwind` for you. But in case you can't download
@@ -110,6 +114,13 @@ defmodule Tailwind do
   end
 
   @doc """
+  Returns the configured tailwind target. By default, it is automatically detected.
+  """
+  def configured_target do
+    Application.get_env(:tailwind, :target, target())
+  end
+
+  @doc """
   Returns the configuration for the given profile.
 
   Returns nil if the profile does not exist.
@@ -138,7 +149,7 @@ defmodule Tailwind do
   The executable may not be available if it was not yet installed.
   """
   def bin_path do
-    name = "tailwind-#{target()}"
+    name = "tailwind-#{configured_target()}"
 
     Application.get_env(:tailwind, :path) ||
       if Code.ensure_loaded?(Mix.Project) do
@@ -248,19 +259,51 @@ defmodule Tailwind do
   #  tailwindcss-windows-x64.exe
   defp target do
     arch_str = :erlang.system_info(:system_architecture)
-    [arch | _] = arch_str |> List.to_string() |> String.split("-")
+    target_triple = arch_str |> List.to_string() |> String.split("-")
 
-    case {:os.type(), arch, :erlang.system_info(:wordsize) * 8} do
-      {{:win32, _}, _arch, 64} -> "windows-x64.exe"
-      {{:unix, :darwin}, arch, 64} when arch in ~w(arm aarch64) -> "macos-arm64"
-      {{:unix, :darwin}, "x86_64", 64} -> "macos-x64"
-      {{:unix, :freebsd}, "aarch64", 64} -> "freebsd-arm64"
-      {{:unix, :freebsd}, arch, 64} when arch in ~w(x86_64 amd64) -> "freebsd-x64"
-      {{:unix, :linux}, "aarch64", 64} -> "linux-arm64"
-      {{:unix, :linux}, "arm", 32} -> "linux-armv7"
-      {{:unix, :linux}, "armv7" <> _, 32} -> "linux-armv7"
-      {{:unix, _osname}, arch, 64} when arch in ~w(x86_64 amd64) -> "linux-x64"
-      {_os, _arch, _wordsize} -> raise "tailwind is not available for architecture: #{arch_str}"
+    {arch, abi} =
+      case target_triple do
+        [arch, _vendor, _system, abi] -> {arch, abi}
+        [arch, _vendor, abi] -> {arch, abi}
+        [arch | _] -> {arch, nil}
+      end
+
+    case {:os.type(), arch, abi, :erlang.system_info(:wordsize) * 8} do
+      {{:win32, _}, _arch, _abi, 64} ->
+        "windows-x64.exe"
+
+      {{:unix, :darwin}, arch, _abi, 64} when arch in ~w(arm aarch64) ->
+        "macos-arm64"
+
+      {{:unix, :darwin}, "x86_64", _abi, 64} ->
+        "macos-x64"
+
+      {{:unix, :freebsd}, "aarch64", _abi, 64} ->
+        "freebsd-arm64"
+
+      {{:unix, :freebsd}, arch, _abi, 64} when arch in ~w(x86_64 amd64) ->
+        "freebsd-x64"
+
+      {{:unix, :linux}, "aarch64", "musl", 64} ->
+        "linux-arm64-musl"
+
+      {{:unix, :linux}, "aarch64", _abi, 64} ->
+        "linux-arm64"
+
+      {{:unix, :linux}, "arm", _abi, 32} ->
+        "linux-armv7"
+
+      {{:unix, :linux}, "armv7" <> _, _abi, 32} ->
+        "linux-armv7"
+
+      {{:unix, _osname}, arch, "musl", 64} when arch in ~w(x86_64 amd64) ->
+        "linux-x64-musl"
+
+      {{:unix, _osname}, arch, _abi, 64} when arch in ~w(x86_64 amd64) ->
+        "linux-x64"
+
+      {_os, _arch, _abi, _wordsize} ->
+        raise "tailwind is not available for architecture: #{arch_str}"
     end
   end
 
@@ -316,7 +359,7 @@ defmodule Tailwind do
              your certificates are set via OTP ca certfile overide via SSL configuration.
 
           2. Manually download the executable from the URL above and
-             place it inside "_build/tailwind-#{target()}"
+             place it inside "_build/tailwind-#{configured_target()}"
 
           3. Install and use Tailwind from npmJS. See our module documentation
              to learn more: https://hexdocs.pm/tailwind
@@ -363,6 +406,6 @@ defmodule Tailwind do
   defp get_url(base_url) do
     base_url
     |> String.replace("$version", configured_version())
-    |> String.replace("$target", target())
+    |> String.replace("$target", configured_target())
   end
 end
