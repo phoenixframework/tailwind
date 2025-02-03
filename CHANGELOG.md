@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.3.0
+
+Support tailwindcss v4+. This release drops official support for tailwindcss v3.
+If you want to continue using tailwindcss v3, please pin the tailwind dependency to a 0.2 version:
+
+```elixir
+{:tailwind, "~> 0.2.0", only: :dev}`
+```
+
 ## v0.2.4 (2024-10-18)
 
 * Add version check flag

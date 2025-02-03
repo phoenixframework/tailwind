@@ -19,7 +19,7 @@ in dev:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.2", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.3", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -30,7 +30,7 @@ then it only needs to be a dev dependency:
 ```elixir
 def deps do
   [
-    {:tailwind, "~> 0.2", only: :dev}
+    {:tailwind, "~> 0.3", only: :dev}
   ]
 end
 ```
@@ -41,6 +41,14 @@ tailwind version of choice:
 ```elixir
 config :tailwind, version: "4.0.0"
 ```
+
+Note that `:tailwind` 0.3+ supports tailwind v4+. If you need to use tailwind v3, use
+
+```
+{:tailwind, "~> 0.2.0", only: :dev}
+```
+
+instead, and refer to [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md).
 
 Now you can install tailwind by running:
 
@@ -91,7 +99,11 @@ to the ones configured above. Note profiles must be configured in your
 
 ## Adding to Phoenix
 
-To add `tailwind` to an application using Phoenix, you will need Phoenix v1.6+
+Note that applications generated with Phoenix older than 1.8 still use Tailwind v3 by default.
+If you're using Tailwind v3 please refer to [the README in the v0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md#adding-to-phoenix)
+instead.
+
+To add Tailwind v4 to an application using Phoenix, you will need Phoenix v1.6+
 and the following steps.
 
 First add it as a dependency in your `mix.exs`:
@@ -100,7 +112,7 @@ First add it as a dependency in your `mix.exs`:
 def deps do
   [
     {:phoenix, "~> 1.7"},
-    {:tailwind, "~> 0.2.4", runtime: Mix.env() == :dev}
+    {:tailwind, "~> 0.3", runtime: Mix.env() == :dev}
   ]
 end
 ```
@@ -164,6 +176,56 @@ right away. It also generates a default configuration file called
 `assets/tailwind.config.js` for you. This is the file we referenced
 when we configured `tailwind` in `config/config.exs`. See
 `mix help tailwind.install` to learn more.
+
+## Updating from Tailwind v3 to v4
+
+For a typical Phoenix application, updating from Tailwind v3 to v4 requires the following steps:
+
+1.  Update the `:tailwind` library to version 0.3+
+  
+    ```diff
+     defp deps do
+       [
+    -    {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+    +    {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
+       ]
+     end
+    ```
+
+2.  Adjust the configuration to run tailwind from the root of your repo (or the web app in an umbrella project):
+
+    ```diff
+     config :tailwind,
+    -   version: "3.4.13",
+    +   version: "4.0.0",
+        default: [
+          args: ~w(
+    -       --config=tailwind.config.js
+    -       --input=css/app.css
+    -       --output=../priv/static/assets/app.css
+    +       --config=assets/tailwind.config.js
+    +       --input=assets/css/app.css
+    +       --output=priv/static/assets/app.css
+         ),
+    -    cd: Path.expand("../assets", __DIR__)
+    +    cd: Path.expand("..", __DIR__)
+      ]
+    ```
+
+    This allows Tailwind to automatically pick up classes from your project. Tailwind v4 does not require explicit configuration of sources.
+
+3.  Adjust the tailwind imports in your app.css
+
+    ```diff
+    -@import "tailwindcss/base";
+    -@import "tailwindcss/components";
+    -@import "tailwindcss/utilities";
+    +@import "tailwindcss";
+    ```
+
+4.  Follow the [Tailwind v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide) to address deprecations.
+
+5.  Optional: remove the tailwind.config.js and switch to the new CSS based configuration. For more information, see the previously mentioned upgrade guide and the [documentation on functions and directives](https://tailwindcss.com/docs/functions-and-directives).
 
 ## License
 
