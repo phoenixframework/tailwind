@@ -299,7 +299,7 @@ defmodule Tailwind do
     end
   end
 
-  defp fetch_body!(url, retry \\ true) do
+  defp fetch_body!(url, retry \\ true) when is_binary(url) do
     scheme = URI.parse(url).scheme
     url = String.to_charlist(url)
     Logger.debug("Downloading tailwind from #{url}")
@@ -350,7 +350,7 @@ defmodule Tailwind do
       when inet in [:inet, :inet6] and
              reason in [:ehostunreach, :enetunreach, :eprotonosupport, :nxdomain] ->
         :httpc.set_options(ipfamily: fallback(inet))
-        fetch_body!(url, false)
+        fetch_body!(to_string(url), false)
 
       other ->
         raise """
