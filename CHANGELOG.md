@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.3.0
+## v0.3.0 (2025-02-26)
 
 Support Tailwind v4+. This release drops official support for Tailwind v3.
 If you want to continue using Tailwind v3, please pin the `tailwind` dependency to a 0.2 version:
