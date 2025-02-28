@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.3.1
+## v0.3.1 (2025-02-28)
 
 * Support correct target for Linux MUSL with Tailwind v3.
 
