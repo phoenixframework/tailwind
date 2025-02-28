@@ -42,13 +42,8 @@ Tailwind version of choice:
 config :tailwind, version: "4.0.9"
 ```
 
-Note that `:tailwind` 0.3+ supports Tailwind v4+. If you need to use Tailwind v3, use
-
-```
-{:tailwind, "~> 0.2.0", only: :dev}
-```
-
-instead, and refer to [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md).
+Note that `:tailwind` 0.3+ assumes Tailwind v4+ by default. It still supports Tailwind v3, but some configuration options when setting up a new
+project might be different. If you use Tailwind v3, also have a look at [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md). 
 
 Now you can install Tailwind by running:
 

@@ -1,13 +1,14 @@
 # CHANGELOG
 
+## v0.3.1
+
+* Support correct target for Linux MUSL with Tailwind v3.
+
 ## v0.3.0 (2025-02-26)
 
-Support Tailwind v4+. This release drops official support for Tailwind v3.
-If you want to continue using Tailwind v3, please pin the `tailwind` dependency to a 0.2 version:
+* Support Tailwind v4+. This release assumes Tailwind v4 for new projects.
 
-```elixir
-{:tailwind, "~> 0.2.0", only: :dev}`
-```
+Note: v0.3.0 dropped target code for handling Linux MUSL with Tailwind v3. Use v0.3.1+ instead.
 
 ## v0.2.4 (2024-10-18)
 
