@@ -282,22 +282,35 @@ defmodule Tailwind do
       {{:unix, :freebsd}, arch, _abi, 64} when arch in ~w(x86_64 amd64) ->
         "freebsd-x64"
 
-      {{:unix, :linux}, "aarch64", "musl", 64} ->
-        "linux-arm64-musl"
+      {{:unix, :linux}, "aarch64", abi, 64} ->
+        "linux-arm64" <> maybe_add_abi_suffix(abi)
 
-      {{:unix, :linux}, "aarch64", _abi, 64} ->
-        "linux-arm64"
+      {{:unix, :linux}, "arm", _abi, 32} ->
+        "linux-armv7"
 
-      {{:unix, _osname}, arch, "musl", 64} when arch in ~w(x86_64 amd64) ->
-        "linux-x64-musl"
+      {{:unix, :linux}, "armv7" <> _, _abi, 32} ->
+        "linux-armv7"
 
-      {{:unix, _osname}, arch, _abi, 64} when arch in ~w(x86_64 amd64) ->
-        "linux-x64"
+      {{:unix, _osname}, arch, abi, 64} when arch in ~w(x86_64 amd64) ->
+        "linux-x64" <> maybe_add_abi_suffix(abi)
 
       {_os, _arch, _abi, _wordsize} ->
         raise "tailwind is not available for architecture: #{arch_str}"
     end
   end
+
+  defp maybe_add_abi_suffix("musl") do
+    # Tailwind CLI v4+ added explicit musl versions for Linux as
+    # tailwind-linux-x64-musl
+    # tailwind-linux-arm64-musl
+    if Version.match?(configured_version(), "~> 4.0") do
+      "-musl"
+    else
+      ""
+    end
+  end
+
+  defp maybe_add_abi_suffix(_), do: ""
 
   defp fetch_body!(url, retry \\ true) when is_binary(url) do
     scheme = URI.parse(url).scheme
@@ -339,7 +352,7 @@ defmodule Tailwind do
         The tailwind binary couldn't be found at: #{url}
 
         This could mean that you're trying to install a version that does not support the detected
-        target architecture.
+        target architecture. For example, Tailwind v4+ dropped support for 32-bit ARM.
 
         You can see the available files for the configured version at:
 
