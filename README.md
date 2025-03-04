@@ -165,10 +165,7 @@ $ mix tailwind.install
 
 This command installs Tailwind and  updates your `assets/css/app.css`
 and `assets/js/app.js` with the necessary changes to start using Tailwind
-right away. It also generates a default configuration file called
-`assets/tailwind.config.js` for you. This is the file we referenced
-when we configured `tailwind` in `config/config.exs`. See
-`mix help tailwind.install` to learn more.
+right away. See `mix help tailwind.install` to learn more.
 
 ## Updating from Tailwind v3 to v4
 
