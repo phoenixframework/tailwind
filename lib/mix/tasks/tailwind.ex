@@ -8,14 +8,16 @@ defmodule Mix.Tasks.Tailwind do
 
   Example:
 
-      $ mix tailwind default --config=tailwind.config.js \
-        --input=css/app.css \
+      $ mix tailwind default --minify --input=css/app.css \
         --output=../priv/static/assets/app.css \
-        --minify
 
-  If tailwind is not installed, it is automatically downloaded.
+  If Tailwind is not installed, it is automatically downloaded.
   Note the arguments given to this task will be appended
   to any configured arguments.
+
+  If using Tailwind v3, you'd also pass the `--config=tailwind.config.js`
+  flag pointing to your Tailwind configuration. In Tailwind v4, the
+  configuration happens with the input CSS file.
 
   ## Options
 

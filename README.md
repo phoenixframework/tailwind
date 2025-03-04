@@ -43,7 +43,7 @@ config :tailwind, version: "4.0.9"
 ```
 
 Note that `:tailwind` 0.3+ assumes Tailwind v4+ by default. It still supports Tailwind v3, but some configuration options when setting up a new
-project might be different. If you use Tailwind v3, also have a look at [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md). 
+project might be different. If you use Tailwind v3, also have a look at [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md).
 
 Now you can install Tailwind by running:
 
@@ -175,7 +175,7 @@ when we configured `tailwind` in `config/config.exs`. See
 For a typical Phoenix application, updating from Tailwind v3 to v4 requires the following steps:
 
 1.  Update the `:tailwind` library to version 0.3+
-  
+
     ```diff
      defp deps do
        [
@@ -196,7 +196,6 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
     -       --config=tailwind.config.js
     -       --input=css/app.css
     -       --output=../priv/static/assets/app.css
-    +       --config=assets/tailwind.config.js
     +       --input=assets/css/app.css
     +       --output=priv/static/assets/app.css
          ),
