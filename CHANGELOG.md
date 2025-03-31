@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## v0.3.1 (2025-02-28)
+## v0.3.2 (2025-03-31)
+
+* Upgrade to TailwindCSS 4.0.17
 
 * Support correct target for Linux MUSL with Tailwind v3.
 
