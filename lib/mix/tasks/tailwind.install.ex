@@ -100,7 +100,7 @@ defmodule Mix.Tasks.Tailwind.Install do
         end
 
         Mix.Task.run("loadpaths")
-        Tailwind.install(profile, base_url)
+        Tailwind.install(base_url, profile)
       end
     end
   end

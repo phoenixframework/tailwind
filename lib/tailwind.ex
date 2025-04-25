@@ -235,7 +235,7 @@ defmodule Tailwind do
   """
   def install_and_run(profile, args) do
     unless File.exists?(bin_path(profile)) do
-      install(profile)
+      install(default_base_url(), profile)
     end
 
     run(profile, args)
@@ -251,7 +251,7 @@ defmodule Tailwind do
   @doc """
   Installs tailwind with `configured_version!/1`.
   """
-  def install(profile \\ :default, base_url \\ default_base_url()) do
+  def install(base_url \\ default_base_url(), profile \\ :default) do
     url = get_url(profile, base_url)
     bin_path = bin_path(profile)
     binary = fetch_body!(url)
