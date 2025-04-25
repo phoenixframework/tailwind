@@ -166,9 +166,7 @@ defmodule Tailwind do
 
   The executable may not be available if it was not yet installed.
   """
-  def bin_path, do: bin_path(configured_version())
-
-  def bin_path(version) do
+  def bin_path(version \\ configured_version()) do
     name = "tailwind-#{configured_target()}-#{version}"
 
     Application.get_env(:tailwind, :path) ||
