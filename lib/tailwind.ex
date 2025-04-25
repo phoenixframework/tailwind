@@ -273,6 +273,7 @@ defmodule Tailwind do
     install(base_url, configured_version())
   end
 
+  @doc false
   def install(base_url, version) do
     url = get_url(base_url, version)
     bin_path = bin_path(version)
