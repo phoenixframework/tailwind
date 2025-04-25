@@ -60,26 +60,15 @@ defmodule Mix.Tasks.Tailwind.Install do
 
   @impl true
   def run(args) do
-    valid_options = [runtime_config: :boolean, if_missing: :boolean, assets: :boolean]
+    if args |> try_install() |> was_successful?() do
+      :ok
+    else
+      :error
+    end
+  end
 
-    {opts, base_url} =
-      case OptionParser.parse_head!(args, strict: valid_options) do
-        {opts, []} ->
-          {opts, Tailwind.default_base_url()}
-
-        {opts, [base_url]} ->
-          {opts, base_url}
-
-        {_, _} ->
-          Mix.raise("""
-          Invalid arguments to tailwind.install, expected one of:
-
-              mix tailwind.install
-              mix tailwind.install 'https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target'
-              mix tailwind.install --runtime-config
-              mix tailwind.install --if-missing
-          """)
-      end
+  defp try_install(args) do
+    {opts, base_url} = parse_arguments(args)
 
     if opts[:runtime_config], do: Mix.Task.run("app.config")
 
@@ -105,10 +94,34 @@ defmodule Mix.Tasks.Tailwind.Install do
     end
   end
 
+  defp parse_arguments(args) do
+    case OptionParser.parse_head!(args, strict: schema()) do
+      {opts, []} ->
+        {opts, Tailwind.default_base_url()}
+
+      {opts, [base_url]} ->
+        {opts, base_url}
+
+      {_, _} ->
+        Mix.raise("""
+        Invalid arguments to tailwind.install, expected one of:
+
+            mix tailwind.install
+            mix tailwind.install 'https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target'
+            mix tailwind.install --runtime-config
+            mix tailwind.install --if-missing
+        """)
+    end
+  end
+
   defp collect_versions do
     for {profile, _} <- Tailwind.profiles(), uniq: true do
       {Tailwind.configured_version(profile), latest_version?(profile)}
     end
+  end
+
+  defp was_successful?(results) do
+    Enum.all?(results, &(&1 == :ok))
   end
 
   defp latest_version?(profile) do
@@ -144,5 +157,9 @@ defmodule Mix.Tasks.Tailwind.Install do
       {:error, _} ->
         :ok
     end
+  end
+
+  defp schema do
+    [runtime_config: :boolean, if_missing: :boolean, assets: :boolean]
   end
 end
