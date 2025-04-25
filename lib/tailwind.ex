@@ -110,7 +110,11 @@ defmodule Tailwind do
   @doc false
   def profiles do
     config_keys = [:version_check, :version, :target, :path]
-    :tailwind |> Application.get_all_env() |> Keyword.drop(config_keys)
+
+    :tailwind
+    |> Application.get_all_env()
+    |> Keyword.drop(config_keys)
+    |> Enum.filter(&Keyword.keyword?(elem(&1, 1)))
   end
 
   @doc """
