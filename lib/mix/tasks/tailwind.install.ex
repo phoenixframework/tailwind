@@ -83,8 +83,8 @@ defmodule Mix.Tasks.Tailwind.Install do
 
     if opts[:runtime_config], do: Mix.Task.run("app.config")
 
-    for {profile, _} <- Tailwind.profiles() do
-      if opts[:if_missing] && latest_version?(profile) do
+    for {version, latest?} <- collect_versions() do
+      if opts[:if_missing] && latest? do
         :ok
       else
         if Keyword.get(opts, :assets, true) do
@@ -100,8 +100,14 @@ defmodule Mix.Tasks.Tailwind.Install do
         end
 
         Mix.Task.run("loadpaths")
-        Tailwind.install(base_url, profile)
+        Tailwind.install(base_url, version)
       end
+    end
+  end
+
+  defp collect_versions do
+    for {profile, _} <- Tailwind.profiles(), uniq: true do
+      {Tailwind.configured_version(profile), latest_version?(profile)}
     end
   end
 
