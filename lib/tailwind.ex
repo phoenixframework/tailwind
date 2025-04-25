@@ -81,20 +81,22 @@ defmodule Tailwind do
         """)
       end
 
-      configured_version = configured_version()
+      for {profile, config} <- profiles() do
+        configured_version = Keyword.get(config, :version, global_version())
 
-      case bin_version() do
-        {:ok, ^configured_version} ->
-          :ok
+        case bin_version(profile) do
+          {:ok, ^configured_version} ->
+            :ok
 
-        {:ok, version} ->
-          Logger.warning("""
-          Outdated tailwind version. Expected #{configured_version}, got #{version}. \
-          Please run `mix tailwind.install` or update the version in your config files.\
-          """)
+          {:ok, version} ->
+            Logger.warning("""
+            Outdated tailwind version. Expected #{configured_version}, got #{version}. \
+            Please run `mix tailwind.install` or update the version in your config files.\
+            """)
 
-        :error ->
-          :ok
+          :error ->
+            :ok
+        end
       end
     end
 
@@ -105,18 +107,36 @@ defmodule Tailwind do
   # Latest known version at the time of publishing.
   def latest_version, do: @latest_version
 
+  @doc false
+  def profiles do
+    config_keys = [:version_check, :version, :target, :path]
+    :tailwind |> Application.get_all_env() |> Keyword.drop(config_keys)
+  end
+
   @doc """
   Returns the configured tailwind version.
   """
-  def configured_version do
+  def global_version do
     Application.get_env(:tailwind, :version, latest_version())
+  end
+
+  @doc """
+  Returns the configured tailwind version for a specific profile.
+
+  If not explicitly configured, falls back to `global_version/0`.
+  Raises if the given profile does not exist.
+  """
+  def configured_version!(profile) when is_atom(profile) do
+    :tailwind
+    |> Application.fetch_env!(profile)
+    |> Keyword.get(:version, global_version())
   end
 
   @doc """
   Returns the configured tailwind target. By default, it is automatically detected.
   """
   def configured_target do
-    Application.get_env(:tailwind, :target, target())
+    Application.get_env(:tailwind, :target, system_target())
   end
 
   @doc """
@@ -146,8 +166,8 @@ defmodule Tailwind do
 
   The executable may not be available if it was not yet installed.
   """
-  def bin_path do
-    name = "tailwind-#{configured_target()}"
+  def bin_path(profile \\ :default) do
+    name = "tailwind-#{configured_target()}-#{configured_version!(profile)}"
 
     Application.get_env(:tailwind, :path) ||
       if Code.ensure_loaded?(Mix.Project) do
@@ -163,8 +183,8 @@ defmodule Tailwind do
   Returns `{:ok, version_string}` on success or `:error` when the executable
   is not available.
   """
-  def bin_version do
-    path = bin_path()
+  def bin_version(profile \\ :default) do
+    path = bin_path(profile)
 
     with true <- File.exists?(path),
          {out, 0} <- System.cmd(path, ["--help"]),
@@ -176,7 +196,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  Runs the given command with `args`.
+  Runs the tailwind CLI for the given `profile` with `args`.
 
   The given args will be appended to the configured args.
   The task output will be streamed directly to stdio. It
@@ -198,7 +218,8 @@ defmodule Tailwind do
       stderr_to_stdout: true
     ]
 
-    bin_path()
+    profile
+    |> bin_path()
     |> System.cmd(args ++ extra_args, opts)
     |> elem(1)
   end
@@ -213,8 +234,8 @@ defmodule Tailwind do
   Returns the same as `run/2`.
   """
   def install_and_run(profile, args) do
-    unless File.exists?(bin_path()) do
-      install()
+    unless File.exists?(bin_path(profile)) do
+      install(profile)
     end
 
     run(profile, args)
@@ -228,11 +249,11 @@ defmodule Tailwind do
   end
 
   @doc """
-  Installs tailwind with `configured_version/0`.
+  Installs tailwind with `configured_version!/1`.
   """
-  def install(base_url \\ default_base_url()) do
-    url = get_url(base_url)
-    bin_path = bin_path()
+  def install(profile \\ :default, base_url \\ default_base_url()) do
+    url = get_url(profile, base_url)
+    bin_path = bin_path(profile)
     binary = fetch_body!(url)
     File.mkdir_p!(Path.dirname(bin_path))
 
@@ -255,7 +276,7 @@ defmodule Tailwind do
   #  tailwindcss-macos-arm64
   #  tailwindcss-macos-x64
   #  tailwindcss-windows-x64.exe
-  defp target do
+  defp system_target do
     arch_str = :erlang.system_info(:system_architecture)
     target_triple = arch_str |> List.to_string() |> String.split("-")
 
@@ -303,7 +324,7 @@ defmodule Tailwind do
     # Tailwind CLI v4+ added explicit musl versions for Linux as
     # tailwind-linux-x64-musl
     # tailwind-linux-arm64-musl
-    if Version.match?(configured_version(), "~> 4.0") do
+    if Version.match?(global_version(), "~> 4.0") do
       "-musl"
     else
       ""
@@ -356,7 +377,7 @@ defmodule Tailwind do
 
         You can see the available files for the configured version at:
 
-        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{configured_version()}
+        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{global_version()}
         """
 
       {true, {:error, {:failed_connect, [{:to_address, _}, {inet, _, reason}]}}}
@@ -420,9 +441,9 @@ defmodule Tailwind do
     :erlang.system_info(:otp_release) |> List.to_integer()
   end
 
-  defp get_url(base_url) do
+  defp get_url(profile, base_url) do
     base_url
-    |> String.replace("$version", configured_version())
+    |> String.replace("$version", configured_version!(profile))
     |> String.replace("$target", configured_target())
   end
 end

@@ -2,6 +2,12 @@ defmodule Mix.Tasks.Tailwind.Install do
   @moduledoc """
   Installs Tailwind executable and assets.
 
+  Usage:
+
+      $ mix tailwind.install TASK_OPTIONS BASE_URL
+
+  Example:
+
       $ mix tailwind.install
       $ mix tailwind.install --if-missing
 
@@ -15,9 +21,7 @@ defmodule Mix.Tasks.Tailwind.Install do
   binary (beware that we cannot guarantee the compatibility of any third party
   executable):
 
-  ```bash
-  $ mix tailwind.install https://people.freebsd.org/~dch/pub/tailwind/v3.2.6/tailwindcss-freebsd-x64
-  ```
+      $ mix tailwind.install https://people.freebsd.org/~dch/pub/tailwind/$version/tailwindcss-$target
 
   ## Options
 
@@ -79,29 +83,31 @@ defmodule Mix.Tasks.Tailwind.Install do
 
     if opts[:runtime_config], do: Mix.Task.run("app.config")
 
-    if opts[:if_missing] && latest_version?() do
-      :ok
-    else
-      if Keyword.get(opts, :assets, true) do
-        File.mkdir_p!("assets/css")
+    for {profile, _} <- Tailwind.profiles() do
+      if opts[:if_missing] && latest_version?(profile) do
+        :ok
+      else
+        if Keyword.get(opts, :assets, true) do
+          File.mkdir_p!("assets/css")
 
-        prepare_app_css()
-        prepare_app_js()
+          prepare_app_css()
+          prepare_app_js()
+        end
+
+        if function_exported?(Mix, :ensure_application!, 1) do
+          Mix.ensure_application!(:inets)
+          Mix.ensure_application!(:ssl)
+        end
+
+        Mix.Task.run("loadpaths")
+        Tailwind.install(profile, base_url)
       end
-
-      if function_exported?(Mix, :ensure_application!, 1) do
-        Mix.ensure_application!(:inets)
-        Mix.ensure_application!(:ssl)
-      end
-
-      Mix.Task.run("loadpaths")
-      Tailwind.install(base_url)
     end
   end
 
-  defp latest_version?() do
-    version = Tailwind.configured_version()
-    match?({:ok, ^version}, Tailwind.bin_version())
+  defp latest_version?(profile) do
+    version = Tailwind.configured_version!(profile)
+    match?({:ok, ^version}, Tailwind.bin_version(profile))
   end
 
   defp prepare_app_css do
