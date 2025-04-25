@@ -82,7 +82,7 @@ defmodule Tailwind do
       end
 
       for {profile, config} <- profiles() do
-        configured_version = Keyword.get(config, :version, global_version())
+        configured_version = Keyword.get(config, :version, configured_version())
 
         case bin_version(profile) do
           {:ok, ^configured_version} ->
@@ -116,20 +116,20 @@ defmodule Tailwind do
   @doc """
   Returns the configured tailwind version.
   """
-  def global_version do
+  def configured_version do
     Application.get_env(:tailwind, :version, latest_version())
   end
 
   @doc """
   Returns the configured tailwind version for a specific profile.
 
-  If not explicitly configured, falls back to `global_version/0`.
+  If not explicitly configured, falls back to `configured_version/0`.
   Raises if the given profile does not exist.
   """
   def configured_version!(profile) when is_atom(profile) do
     :tailwind
     |> Application.fetch_env!(profile)
-    |> Keyword.get(:version, global_version())
+    |> Keyword.get(:version, configured_version())
   end
 
   @doc """
@@ -324,7 +324,7 @@ defmodule Tailwind do
     # Tailwind CLI v4+ added explicit musl versions for Linux as
     # tailwind-linux-x64-musl
     # tailwind-linux-arm64-musl
-    if Version.match?(global_version(), "~> 4.0") do
+    if Version.match?(configured_version(), "~> 4.0") do
       "-musl"
     else
       ""
@@ -377,7 +377,7 @@ defmodule Tailwind do
 
         You can see the available files for the configured version at:
 
-        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{global_version()}
+        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{configured_version()}
         """
 
       {true, {:error, {:failed_connect, [{:to_address, _}, {inet, _, reason}]}}}
