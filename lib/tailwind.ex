@@ -21,6 +21,9 @@ defmodule Tailwind do
           cd: Path.expand("../assets", __DIR__),
         ]
 
+  It is also possible to override the required tailwind CLI version on
+  profile-basis.
+
   ## Tailwind configuration
 
   There are four global configurations for the tailwind application:
@@ -146,7 +149,7 @@ defmodule Tailwind do
   @doc """
   Returns the configuration for the given profile.
 
-  Returns nil if the profile does not exist.
+  Raises if the profile does not exist.
   """
   def config_for!(profile) when is_atom(profile) do
     Application.get_env(:tailwind, profile) ||
@@ -166,7 +169,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  Returns the path to the executable.
+  Returns the path to the executable for the given `version`.
 
   The executable may not be available if it was not yet installed.
   """
@@ -182,9 +185,9 @@ defmodule Tailwind do
   end
 
   @doc """
-  Returns the version of the tailwind executable.
+  Returns the version of the executable.
 
-  Returns `{:ok, version_string}` on success or `:error` when the executable
+  Returns `{:ok, vsn}` on success or `:error` when the executable
   is not available.
   """
   def bin_version do
@@ -245,7 +248,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  Installs, if not available, and then runs `tailwind`.
+  Installs, if not available, and then runs the tailwind CLI.
 
   Returns the same as `run/2`.
   """
@@ -260,7 +263,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  The default URL to install Tailwind from.
+  Returns the default URL to install Tailwind from.
   """
   def default_base_url do
     "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
@@ -268,6 +271,9 @@ defmodule Tailwind do
 
   @doc """
   Installs tailwind with `configured_version/0`.
+
+  If given, the executable is downloaded from `base_url`,
+  otherwise, `default_base_url/0` is used.
   """
   def install(base_url \\ default_base_url()) do
     install(base_url, configured_version())
