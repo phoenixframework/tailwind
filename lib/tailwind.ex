@@ -126,9 +126,9 @@ defmodule Tailwind do
   If not explicitly configured, falls back to `configured_version/0`.
   Raises if the given profile does not exist.
   """
-  def configured_version!(profile) when is_atom(profile) do
+  def configured_version(profile) when is_atom(profile) do
     :tailwind
-    |> Application.fetch_env!(profile)
+    |> Application.get_env(profile, [])
     |> Keyword.get(:version, configured_version())
   end
 
@@ -167,7 +167,7 @@ defmodule Tailwind do
   The executable may not be available if it was not yet installed.
   """
   def bin_path(profile \\ :default) do
-    name = "tailwind-#{configured_target()}-#{configured_version!(profile)}"
+    name = "tailwind-#{configured_target()}-#{configured_version(profile)}"
 
     Application.get_env(:tailwind, :path) ||
       if Code.ensure_loaded?(Mix.Project) do
@@ -249,7 +249,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  Installs tailwind with `configured_version!/1`.
+  Installs tailwind with `configured_version/1`.
   """
   def install(base_url \\ default_base_url(), profile \\ :default) do
     url = get_url(profile, base_url)
@@ -443,7 +443,7 @@ defmodule Tailwind do
 
   defp get_url(profile, base_url) do
     base_url
-    |> String.replace("$version", configured_version!(profile))
+    |> String.replace("$version", configured_version(profile))
     |> String.replace("$target", configured_target())
   end
 end

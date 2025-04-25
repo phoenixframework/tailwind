@@ -106,7 +106,7 @@ defmodule Mix.Tasks.Tailwind.Install do
   end
 
   defp latest_version?(profile) do
-    version = Tailwind.configured_version!(profile)
+    version = Tailwind.configured_version(profile)
     match?({:ok, ^version}, Tailwind.bin_version(profile))
   end
 
