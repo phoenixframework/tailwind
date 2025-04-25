@@ -263,7 +263,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  Installs tailwind with `configured_version/1`.
+  Installs tailwind with `configured_version/0`.
   """
   def install(base_url \\ default_base_url()) do
     install(base_url, configured_version())
