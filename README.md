@@ -92,6 +92,19 @@ to the ones configured above. Note profiles must be configured in your
 `config/config.exs`, as `tailwind` runs without starting your application
 (and therefore it won't pick settings in `config/runtime.exs`).
 
+We also strongly recommend setting up the `@source` paths in your in `app.css`
+file, for example:
+
+```css
+@source "../css";
+@source "../js";
+@source "../../lib/YOUR_APP_web";
+```
+
+This will make Tailwind watch `assets/css`, `assets/js` and `lib/YOUR_APP_web`.
+Without those, too many files (including build artifacts) may be watched,
+leading to frequent recompilations.
+
 ## Adding to Phoenix
 
 Note that applications generated with Phoenix older than 1.8 still use Tailwind v3 by default.
