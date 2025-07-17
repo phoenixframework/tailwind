@@ -3,7 +3,7 @@
 [![CI](https://github.com/phoenixframework/tailwind/actions/workflows/main.yml/badge.svg)](https://github.com/phoenixframework/tailwind/actions/workflows/main.yml)
 
 Mix tasks for installing and invoking [tailwindcss](https://tailwindcss.com) via the
-stand-alone [tailwindcss cli](https://github.com/tailwindlabs/tailwindcss/tree/master/standalone-cli)
+stand-alone [tailwindcss cli](https://github.com/tailwindlabs/tailwindcss/tree/main/packages/%40tailwindcss-standalone)
 
 _Note_: The stand-alone Tailwind client bundles first-class Tailwind packages
 within the precompiled executable. For third-party Tailwind plugin support (e.g. DaisyUI),
