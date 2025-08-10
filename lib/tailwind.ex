@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "4.0.9"
+  @latest_version "4.1.11"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
@@ -44,26 +44,25 @@ defmodule Tailwind do
   it (for example, GitHub behind a proxy), you may want to
   set the `:path` to a configurable system location.
 
-  For instance, you can install `tailwind` globally with `npm`:
+  For instance, you can install `tailwind` and its CLI tool with `npm` (from `/assets`):
 
-      $ npm install -g tailwindcss
+      $ npm install tailwindcss @tailwindcss/cli
 
-  On Unix, the executable will be at:
+  And adjust config:
 
-      NPM_ROOT/tailwind/node_modules/tailwind-TARGET/bin/tailwind
-
-  On Windows, it will be at:
-
-      NPM_ROOT/tailwind/node_modules/tailwind-windows-(32|64)/tailwind.exe
-
-  Where `NPM_ROOT` is the result of `npm root -g` and `TARGET` is your system
-  target architecture.
-
-  Once you find the location of the executable, you can store it in a
-  `MIX_TAILWIND_PATH` environment variable, which you can then read in
-  your configuration file:
-
-      config :tailwind, path: System.get_env("MIX_TAILWIND_PATH")
+      config :tailwind,
+        version: "#{@latest_version}",
+        default: [
+          args: ~w(
+            --input=css/app.css
+            --output=../priv/static/assets/app.css
+          ),
+          cd: Path.expand("../assets", __DIR__),
+        ],
+        # skip executable check/download
+        version_check: false,
+        # path to npm managed CLI tool
+        path: Path.expand("../assets/node_modules/.bin/tailwindcss", __DIR__)
 
   """
 
