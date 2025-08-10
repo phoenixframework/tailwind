@@ -44,11 +44,13 @@ defmodule Tailwind do
   it (for example, GitHub behind a proxy), you may want to
   set the `:path` to a configurable system location.
 
-  For instance, you can install `tailwind` and its CLI tool with `npm` (from `/assets`):
+  For instance, you can install `tailwind` and its CLI tool with `npm`.
+
+  From `/assets`:
 
       $ npm install tailwindcss @tailwindcss/cli
 
-  And adjust your configuration:
+  Then adjust your configuration:
 
       config :tailwind,
         # check if in sync with /assets/package.json
