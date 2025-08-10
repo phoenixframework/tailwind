@@ -48,9 +48,10 @@ defmodule Tailwind do
 
       $ npm install tailwindcss @tailwindcss/cli
 
-  And adjust config:
+  And adjust your configuration:
 
       config :tailwind,
+        # check if in sync with /assets/package.json
         version: "#{@latest_version}",
         default: [
           args: ~w(
