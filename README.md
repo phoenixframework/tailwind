@@ -81,7 +81,7 @@ config :tailwind,
   default: [
     args: ~w(
       --input=assets/css/app.css
-      --output=priv/static/assets/app.css
+      --output=priv/static/assets/css/app.css
     ),
     cd: Path.expand("..", __DIR__)
   ]
@@ -131,7 +131,7 @@ alias for deployments (with the `--minify` option):
 ```
 
 Now let's change `config/config.exs` to tell `tailwind`
-to build our css bundle into `priv/static/assets`.
+to build our css bundle into `priv/static/assets/css`.
 We'll also give it our `assets/css/app.css` as our css entry point:
 
 ```elixir
@@ -140,7 +140,7 @@ config :tailwind,
   default: [
     args: ~w(
       --input=assets/css/app.css
-      --output=priv/static/assets/app.css
+      --output=priv/static/assets/css/app.css
     ),
     cd: Path.expand("..", __DIR__)
   ]
@@ -205,9 +205,9 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
           args: ~w(
     -       --config=tailwind.config.js
     -       --input=css/app.css
-    -       --output=../priv/static/assets/app.css
+    -       --output=../priv/static/assets/css/app.css
     +       --input=assets/css/app.css
-    +       --output=priv/static/assets/app.css
+    +       --output=priv/static/assets/css/app.css
          ),
     -    cd: Path.expand("../assets", __DIR__)
     +    cd: Path.expand("..", __DIR__)
