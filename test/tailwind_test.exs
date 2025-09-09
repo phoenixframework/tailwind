@@ -40,7 +40,6 @@ defmodule TailwindTest do
     Application.delete_env(:tailwind, :version)
 
     Mix.Task.rerun("tailwind.install", ["--if-missing"])
-    assert File.read!("assets/css/app.css") =~ "tailwind"
 
     assert ExUnit.CaptureIO.capture_io(fn ->
              assert Tailwind.run(:default, ["--help"]) == 0

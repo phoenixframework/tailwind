@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.4.0-dev
+
+* No longer copy assets in `mix tailwind.install`
+* Discard empty proxy env vars
+
 ## v0.3.1 (2025-02-28)
 
 * Support correct target for Linux MUSL with Tailwind v3.
