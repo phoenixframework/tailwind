@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "4.1.11"
+  @latest_version "4.1.12"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
@@ -15,10 +15,10 @@ defmodule Tailwind do
         version: "#{@latest_version}",
         default: [
           args: ~w(
-            --input=css/app.css
-            --output=../priv/static/assets/app.css
+            --input=assets/css/app.css
+            --output=priv/static/assets/app.css
           ),
-          cd: Path.expand("../assets", __DIR__),
+          cd: Path.expand("..", __DIR__),
         ]
 
   ## Tailwind configuration
@@ -57,10 +57,10 @@ defmodule Tailwind do
         version: "#{@latest_version}",
         default: [
           args: ~w(
-            --input=css/app.css
-            --output=../priv/static/assets/app.css
+            --input=assets/css/app.css
+            --output=priv/static/assets/app.css
           ),
-          cd: Path.expand("../assets", __DIR__),
+          cd: Path.expand("..", __DIR__),
         ],
         # skip executable check/download
         version_check: false,

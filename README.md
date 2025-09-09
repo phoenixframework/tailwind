@@ -24,26 +24,17 @@ def deps do
 end
 ```
 
-However, if your assets are precompiled during development,
-then it only needs to be a dev dependency:
-
-```elixir
-def deps do
-  [
-    {:tailwind, "~> 0.3", only: :dev}
-  ]
-end
-```
-
 Once installed, change your `config/config.exs` to pick your
 Tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "4.0.9"
+config :tailwind, version: "4.1.12"
 ```
 
-Note that `:tailwind` 0.3+ assumes Tailwind v4+ by default. It still supports Tailwind v3, but some configuration options when setting up a new
-project might be different. If you use Tailwind v3, also have a look at [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md).
+Note that `:tailwind` 0.3+ assumes Tailwind v4+ by default.
+It still supports Tailwind v3, but some configuration options
+when setting up a new project might be different. If you use
+Tailwind v3, also have a look at [the README in the 0.2 branch](https://github.com/phoenixframework/tailwind/blob/v0.2/README.md).
 
 Now you can install Tailwind by running:
 
@@ -73,11 +64,11 @@ Where `TARGET` is your system target architecture.
 The first argument to `tailwind` is the execution profile.
 You can define multiple execution profiles with the current
 directory, the OS environment, and default arguments to the
-`tailwind` task:
+`tailwind` task in your `config/config.exs`:
 
 ```elixir
 config :tailwind,
-  version: "4.0.9",
+  version: "4.1.12",
   default: [
     args: ~w(
       --input=assets/css/app.css
@@ -88,22 +79,7 @@ config :tailwind,
 ```
 
 When `mix tailwind default` is invoked, the task arguments will be appended
-to the ones configured above. Note profiles must be configured in your
-`config/config.exs`, as `tailwind` runs without starting your application
-(and therefore it won't pick settings in `config/runtime.exs`).
-
-We also strongly recommend setting up the `@source` paths in your in `app.css`
-file, for example:
-
-```css
-@source "../css";
-@source "../js";
-@source "../../lib/YOUR_APP_web";
-```
-
-This will make Tailwind watch `assets/css`, `assets/js` and `lib/YOUR_APP_web`.
-Without those, too many files (including build artifacts) may be watched,
-leading to frequent recompilations.
+to the ones configured above.
 
 ## Adding to Phoenix
 
@@ -117,7 +93,7 @@ as a dependency in your `mix.exs`:
 ```elixir
 def deps do
   [
-    {:phoenix, "~> 1.7"},
+    {:phoenix, "~> 1.8"},
     {:tailwind, "~> 0.3", runtime: Mix.env() == :dev}
   ]
 end
@@ -136,7 +112,7 @@ We'll also give it our `assets/css/app.css` as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "4.0.9",
+  version: "4.1.12",
   default: [
     args: ~w(
       --input=assets/css/app.css
@@ -147,14 +123,14 @@ config :tailwind,
 ```
 
 > Make sure the "assets" directory from priv/static is listed in the
-> :only option for Plug.Static in your lib/my_app_web/endpoint.ex
+> `:only` option for Plug.Static in your `lib/my_app_web/endpoint.ex`
 
 If your Phoenix application is using an umbrella structure, you should specify
 the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "4.0.9",
+  version: "4.1.12",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>", __DIR__)
@@ -170,15 +146,23 @@ configuration in your `config/dev.exs` and add:
 
 Note we are enabling the file system watcher.
 
-Finally, run the command:
+Finally, create the relevant `assets/css/app.css` file:
 
-```bash
-$ mix tailwind.install
+```css
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/YOUR_APP_web";
+
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 ```
 
-This command installs Tailwind and  updates your `assets/css/app.css`
-and `assets/js/app.js` with the necessary changes to start using Tailwind
-right away. See `mix help tailwind.install` to learn more.
+We also strongly recommend setting up the `@source` paths in your in `app.css`
+file to watch `assets/css`, `assets/js` and `lib/YOUR_APP_web`, as above.
+Without those, too many files (including build artifacts) may be watched,
+leading to frequent recompilations.
 
 ## Updating from Tailwind v3 to v4
 
@@ -200,7 +184,7 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
     ```diff
      config :tailwind,
     -   version: "3.4.13",
-    +   version: "4.0.9",
+    +   version: "4.1.12",
         default: [
           args: ~w(
     -       --config=tailwind.config.js
