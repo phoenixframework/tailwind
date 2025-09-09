@@ -378,7 +378,7 @@ defmodule Tailwind do
              your certificates are set via OTP ca certfile overide via SSL configuration.
 
           2. Manually download the executable from the URL above and
-             place it inside "_build/tailwind-#{configured_target()}"
+             place it at "_build/tailwind-#{configured_target()}"
 
           3. Install and use Tailwind from npmJS. See our module documentation
              to learn more: https://hexdocs.pm/tailwind
