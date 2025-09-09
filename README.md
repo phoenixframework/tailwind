@@ -205,7 +205,7 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
           args: ~w(
     -       --config=tailwind.config.js
     -       --input=css/app.css
-    -       --output=../priv/static/assets/css/app.css
+    -       --output=../priv/static/assets/app.css
     +       --input=assets/css/app.css
     +       --output=priv/static/assets/css/app.css
          ),
