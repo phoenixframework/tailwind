@@ -26,7 +26,7 @@ defmodule TailwindTest do
            end) =~ @version
   end
 
-  test "installs and updates with custom config and path" do
+  test "installs and updates with custom config" do
     Application.put_env(:tailwind, :version, "3.4.17")
 
     Mix.Task.rerun("tailwind.install", [
@@ -36,5 +36,14 @@ defmodule TailwindTest do
     assert ExUnit.CaptureIO.capture_io(fn ->
              assert Tailwind.run(:default, ["--help"]) == 0
            end) =~ "3.4.17"
+
+    Application.delete_env(:tailwind, :version)
+
+    Mix.Task.rerun("tailwind.install", ["--if-missing"])
+    assert File.read!("assets/css/app.css") =~ "tailwind"
+
+    assert ExUnit.CaptureIO.capture_io(fn ->
+             assert Tailwind.run(:default, ["--help"]) == 0
+           end) =~ @version
   end
 end
