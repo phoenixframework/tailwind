@@ -205,6 +205,9 @@ defmodule Tailwind do
     |> elem(1)
   end
 
+  # Tailwind watcher misbehaves if the driver letter starts in lowercase,
+  # even though it is valid on Windows. More information:
+  # https://github.com/phoenixframework/tailwind/issues/129
   defp normalize_windows_driver(path) do
     with {:win32, _} <- :os.type(),
          <<letter, ?:, rest::binary>> when letter in ?a..?z <- to_string(path) do
