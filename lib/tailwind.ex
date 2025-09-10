@@ -194,7 +194,7 @@ defmodule Tailwind do
       |> add_env_variable_to_ignore_browserslist_outdated_warning()
 
     opts = [
-      cd: config[:cd] || File.cwd!(),
+      cd: normalize_windows_driver(config[:cd] || File.cwd!()),
       env: env,
       into: IO.stream(:stdio, :line),
       stderr_to_stdout: true
@@ -203,6 +203,15 @@ defmodule Tailwind do
     bin_path()
     |> System.cmd(args ++ extra_args, opts)
     |> elem(1)
+  end
+
+  defp normalize_windows_driver(path) do
+    with {:win32, _} <- :os.type(),
+         <<letter, ?:, rest::binary>> when letter in ?a..?z <- to_string(path) do
+      <<letter - 32, ?:, rest::binary>>
+    else
+      _ -> path
+    end
   end
 
   defp add_env_variable_to_ignore_browserslist_outdated_warning(env) do
