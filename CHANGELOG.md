@@ -1,9 +1,10 @@
 # CHANGELOG
 
-## v0.4.0-dev
+## v0.4.0 (2025-09-10)
 
 * No longer copy assets in `mix tailwind.install`
 * Discard empty proxy env vars
+* Ensure watcher picks up rule changes on Windows
 
 ## v0.3.1 (2025-02-28)
 
