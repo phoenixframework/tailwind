@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.1 (2025-10-17)
+
+* Ignore ANSI escape codes when checking version
+
 ## v0.4.0 (2025-09-10)
 
 * No longer copy assets in `mix tailwind.install`
