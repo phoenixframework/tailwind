@@ -169,7 +169,7 @@ defmodule Tailwind do
     path = bin_path()
 
     with true <- File.exists?(path),
-         {out, 0} <- System.cmd(path, ["--help"]),
+         {out, 0} <- System.cmd(path, ["--help"], env: %{"NO_COLOR" => "1"}),
          [vsn] <- Regex.run(~r/tailwindcss v([^\s]+)/, out, capture: :all_but_first) do
       {:ok, vsn}
     else
