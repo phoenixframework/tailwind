@@ -54,17 +54,17 @@ $ mix tailwind default
 The executable is kept at `_build/tailwind-TARGET`.
 Where `TARGET` is your system target architecture.
 
-### Alternative if you cannot or don't want to use tailwindcss cli binary
+### Using Tailwind CLI from npm
 
-You can use node version. After `mix phx.new`:
+You can use Tailwind from NPM. Assuming you have an `assets/` directory:
 
-1.  run in the project rood directory:
+1.  Run in the project root directory:
 
     ```bash
     $ npm i --prefix assets -D tailwindcss @tailwindcss/cli daisyui
     ```
 
-2.  edit `config/config.exs` file:
+2.  Edit `config/config.exs` file:
 
     ```diff
     config :tailwind,
@@ -73,7 +73,7 @@ You can use node version. After `mix phx.new`:
       ...
     ```
 
-3.  edit `assets/css/app.css`:
+3.  Edit `assets/css/app.css`:
 
     ```diff
     -@plugin "../vendor/daisyui" {
@@ -83,8 +83,8 @@ You can use node version. After `mix phx.new`:
     +@plugin "daisyui/theme" {
     ```
 
-4.  now you don't need the binary: `rm _build/tailwindcss-*`
-    vendor js files too: `rm assets/vendor/daisy*`
+4.  Now you don't need the Tailwind binary and you can remove the
+    vendored JS files: `rm assets/vendor/daisy*`
 
 ## Profiles
 
