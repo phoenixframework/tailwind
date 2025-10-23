@@ -54,6 +54,38 @@ $ mix tailwind default
 The executable is kept at `_build/tailwind-TARGET`.
 Where `TARGET` is your system target architecture.
 
+### Using Tailwind CLI from npm
+
+You can use Tailwind from NPM. Assuming you have an `assets/` directory:
+
+1.  Run in the project root directory:
+
+    ```bash
+    $ npm i --prefix assets -D tailwindcss @tailwindcss/cli daisyui
+    ```
+
+2.  Edit `config/config.exs` file:
+
+    ```diff
+    config :tailwind,
+    +  version_check: false,
+    +  path: Path.expand("../assets/node_modules/.bin/tailwindcss", __DIR__),
+      ...
+    ```
+
+3.  Edit `assets/css/app.css`:
+
+    ```diff
+    -@plugin "../vendor/daisyui" {
+    +@plugin "daisyui" {
+    ...
+    -@plugin "../vendor/daisyui-theme" {
+    +@plugin "daisyui/theme" {
+    ```
+
+4.  Now you don't need the Tailwind binary and you can remove the
+    vendored JS files: `rm assets/vendor/daisy*`
+
 ## Profiles
 
 The first argument to `tailwind` is the execution profile.
