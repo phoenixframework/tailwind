@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v0.4.1 (2025-10-17)
+
+* Ignore ANSI escape codes when checking version
+
+## v0.4.0 (2025-09-10)
+
+* No longer copy assets in `mix tailwind.install`
+* Discard empty proxy env vars
+* Ensure watcher picks up rule changes on Windows
+
 ## v0.3.1 (2025-02-28)
 
 * Support correct target for Linux MUSL with Tailwind v3.

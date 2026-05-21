@@ -1,6 +1,6 @@
 defmodule Tailwind do
   # https://github.com/tailwindlabs/tailwindcss/releases
-  @latest_version "4.0.9"
+  @latest_version "4.1.12"
 
   @moduledoc """
   Tailwind is an installer and runner for [tailwind](https://tailwindcss.com/).
@@ -15,10 +15,10 @@ defmodule Tailwind do
         version: "#{@latest_version}",
         default: [
           args: ~w(
-            --input=css/app.css
-            --output=../priv/static/assets/app.css
+            --input=assets/css/app.css
+            --output=priv/static/assets/app.css
           ),
-          cd: Path.expand("../assets", __DIR__),
+          cd: Path.expand("..", __DIR__),
         ]
 
   It is also possible to override the required tailwind CLI version on
@@ -47,26 +47,28 @@ defmodule Tailwind do
   it (for example, GitHub behind a proxy), you may want to
   set the `:path` to a configurable system location.
 
-  For instance, you can install `tailwind` globally with `npm`:
+  For instance, you can install `tailwind` and its CLI tool with `npm`.
 
-      $ npm install -g tailwindcss
+  From `/assets`:
 
-  On Unix, the executable will be at:
+      $ npm install tailwindcss @tailwindcss/cli
 
-      NPM_ROOT/tailwind/node_modules/tailwind-TARGET/bin/tailwind
+  Then adjust your configuration:
 
-  On Windows, it will be at:
-
-      NPM_ROOT/tailwind/node_modules/tailwind-windows-(32|64)/tailwind.exe
-
-  Where `NPM_ROOT` is the result of `npm root -g` and `TARGET` is your system
-  target architecture.
-
-  Once you find the location of the executable, you can store it in a
-  `MIX_TAILWIND_PATH` environment variable, which you can then read in
-  your configuration file:
-
-      config :tailwind, path: System.get_env("MIX_TAILWIND_PATH")
+      config :tailwind,
+        # check if in sync with /assets/package.json
+        version: "#{@latest_version}",
+        default: [
+          args: ~w(
+            --input=assets/css/app.css
+            --output=priv/static/assets/app.css
+          ),
+          cd: Path.expand("..", __DIR__),
+        ],
+        # skip executable check/download
+        version_check: false,
+        # path to npm managed CLI tool
+        path: Path.expand("../assets/node_modules/.bin/tailwindcss", __DIR__)
 
   """
 
@@ -205,7 +207,7 @@ defmodule Tailwind do
 
   defp get_version(path) do
     with true <- File.exists?(path),
-         {out, 0} <- System.cmd(path, ["--help"]),
+         {out, 0} <- System.cmd(path, ["--help"], env: %{"NO_COLOR" => "1"}),
          [vsn] <- Regex.run(~r/tailwindcss v([^\s]+)/, out, capture: :all_but_first) do
       {:ok, vsn}
     else
@@ -230,7 +232,7 @@ defmodule Tailwind do
       |> add_env_variable_to_ignore_browserslist_outdated_warning()
 
     opts = [
-      cd: config[:cd] || File.cwd!(),
+      cd: normalize_windows_driver(config[:cd] || File.cwd!()),
       env: env,
       into: IO.stream(:stdio, :line),
       stderr_to_stdout: true
@@ -241,6 +243,18 @@ defmodule Tailwind do
     |> bin_path()
     |> System.cmd(args ++ extra_args, opts)
     |> elem(1)
+  end
+
+  # Tailwind watcher misbehaves if the driver letter starts in lowercase,
+  # even though it is valid on Windows. More information:
+  # https://github.com/phoenixframework/tailwind/issues/129
+  defp normalize_windows_driver(path) do
+    with {:win32, _} <- :os.type(),
+         <<letter, ?:, rest::binary>> when letter in ?a..?z <- to_string(path) do
+      <<letter - 32, ?:, rest::binary>>
+    else
+      _ -> path
+    end
   end
 
   defp add_env_variable_to_ignore_browserslist_outdated_warning(env) do
@@ -426,7 +440,7 @@ defmodule Tailwind do
              your certificates are set via OTP ca certfile overide via SSL configuration.
 
           2. Manually download the executable from the URL above and
-             place it inside "_build/tailwind-#{configured_target()}"
+             place it at "_build/tailwind-#{configured_target()}"
 
           3. Install and use Tailwind from npmJS. See our module documentation
              to learn more: https://hexdocs.pm/tailwind
@@ -438,11 +452,18 @@ defmodule Tailwind do
   defp fallback(:inet6), do: :inet
 
   defp proxy_for_scheme("http") do
-    System.get_env("HTTP_PROXY") || System.get_env("http_proxy")
+    get_and_sanitize_env_var("HTTP_PROXY") || get_and_sanitize_env_var("http_proxy")
   end
 
   defp proxy_for_scheme("https") do
-    System.get_env("HTTPS_PROXY") || System.get_env("https_proxy")
+    get_and_sanitize_env_var("HTTPS_PROXY") || get_and_sanitize_env_var("https_proxy")
+  end
+
+  defp get_and_sanitize_env_var(env_var) do
+    case String.trim(System.get_env(env_var, "")) do
+      "" -> nil
+      trimmed -> trimmed
+    end
   end
 
   defp maybe_add_proxy_auth(http_options, scheme) do
