@@ -142,10 +142,22 @@ defmodule Tailwind do
   end
 
   @doc """
-  Returns the configured tailwind target. By default, it is automatically detected.
+  Returns the configured tailwind target. By default, it is automatically detected
+  based on the globally configured version.
   """
   def configured_target do
-    Application.get_env(:tailwind, :target, system_target())
+    configured_target(configured_version())
+  end
+
+  @doc """
+  Returns the configured tailwind target for the given `version`.
+
+  The version is consulted only when no explicit `:target` is configured and the
+  target is auto-detected; some target suffixes (eg. the linux musl suffix) are
+  version-dependent.
+  """
+  def configured_target(version) when is_binary(version) do
+    Application.get_env(:tailwind, :target, system_target(version))
   end
 
   @doc """
@@ -176,7 +188,7 @@ defmodule Tailwind do
   The executable may not be available if it was not yet installed.
   """
   def bin_path(version \\ configured_version()) do
-    name = "tailwind-#{configured_target()}-#{version}"
+    name = "tailwind-#{configured_target(version)}-#{version}"
 
     Application.get_env(:tailwind, :path) ||
       if Code.ensure_loaded?(Mix.Project) do
@@ -319,7 +331,7 @@ defmodule Tailwind do
   #  tailwindcss-macos-arm64
   #  tailwindcss-macos-x64
   #  tailwindcss-windows-x64.exe
-  defp system_target do
+  defp system_target(version) do
     arch_str = :erlang.system_info(:system_architecture)
     target_triple = arch_str |> List.to_string() |> String.split("-")
 
@@ -347,7 +359,7 @@ defmodule Tailwind do
         "freebsd-x64"
 
       {{:unix, :linux}, "aarch64", abi, 64} ->
-        "linux-arm64" <> maybe_add_abi_suffix(abi)
+        "linux-arm64" <> maybe_add_abi_suffix(abi, version)
 
       {{:unix, :linux}, "arm", _abi, 32} ->
         "linux-armv7"
@@ -356,25 +368,25 @@ defmodule Tailwind do
         "linux-armv7"
 
       {{:unix, _osname}, arch, abi, 64} when arch in ~w(x86_64 amd64) ->
-        "linux-x64" <> maybe_add_abi_suffix(abi)
+        "linux-x64" <> maybe_add_abi_suffix(abi, version)
 
       {_os, _arch, _abi, _wordsize} ->
         raise "tailwind is not available for architecture: #{arch_str}"
     end
   end
 
-  defp maybe_add_abi_suffix("musl") do
+  defp maybe_add_abi_suffix("musl", version) do
     # Tailwind CLI v4+ added explicit musl versions for Linux as
     # tailwind-linux-x64-musl
     # tailwind-linux-arm64-musl
-    if Version.match?(configured_version(), "~> 4.0") do
+    if Version.match?(version, "~> 4.0") do
       "-musl"
     else
       ""
     end
   end
 
-  defp maybe_add_abi_suffix(_), do: ""
+  defp maybe_add_abi_suffix(_, _), do: ""
 
   defp fetch_body!(url, retry \\ true) when is_binary(url) do
     scheme = URI.parse(url).scheme
@@ -494,6 +506,6 @@ defmodule Tailwind do
   defp get_url(base_url, version) do
     base_url
     |> String.replace("$version", version)
-    |> String.replace("$target", configured_target())
+    |> String.replace("$target", configured_target(version))
   end
 end
