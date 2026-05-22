@@ -149,14 +149,7 @@ defmodule Tailwind do
     configured_target(configured_version())
   end
 
-  @doc """
-  Returns the configured tailwind target for the given `version`.
-
-  The version is consulted only when no explicit `:target` is configured and the
-  target is auto-detected; some target suffixes (eg. the linux musl suffix) are
-  version-dependent.
-  """
-  def configured_target(version) when is_binary(version) do
+  defp configured_target(version) when is_binary(version) do
     Application.get_env(:tailwind, :target, system_target(version))
   end
 
