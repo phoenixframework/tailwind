@@ -40,31 +40,42 @@ defmodule Mix.Tasks.Tailwind.Install do
 
   @impl true
   def run(args) do
-    if args |> try_install() |> was_successful?() do
+    {opts, base_url} = parse_arguments(args)
+
+    if opts[:runtime_config] do
+      Mix.Task.run("app.config")
+    end
+
+    case resolve_versions(opts) do
+      [] -> :ok
+      versions -> install_versions(base_url, versions)
+    end
+  end
+
+  defp resolve_versions(opts) do
+    for {version, latest?} <- collect_versions(),
+        not (opts[:if_missing] && latest?) do
+      version
+    end
+  end
+
+  defp install_versions(base_url, versions) do
+    ensure_install_ready()
+
+    if Enum.all?(versions, &(Tailwind.install(base_url, &1) == :ok)) do
       :ok
     else
       :error
     end
   end
 
-  defp try_install(args) do
-    {opts, base_url} = parse_arguments(args)
-
-    if opts[:runtime_config], do: Mix.Task.run("app.config")
-
-    for {version, latest?} <- collect_versions() do
-      if opts[:if_missing] && latest? do
-        :ok
-      else
-        if function_exported?(Mix, :ensure_application!, 1) do
-          Mix.ensure_application!(:inets)
-          Mix.ensure_application!(:ssl)
-        end
-
-        Mix.Task.run("loadpaths")
-        Tailwind.install(base_url, version)
-      end
+  defp ensure_install_ready do
+    if function_exported?(Mix, :ensure_application!, 1) do
+      Mix.ensure_application!(:inets)
+      Mix.ensure_application!(:ssl)
     end
+
+    Mix.Task.run("loadpaths")
   end
 
   defp parse_arguments(args) do
@@ -91,10 +102,6 @@ defmodule Mix.Tasks.Tailwind.Install do
     for {profile, _} <- Tailwind.profiles(), uniq: true do
       {Tailwind.configured_version(profile), latest_version?(profile)}
     end
-  end
-
-  defp was_successful?(results) do
-    Enum.all?(results, &(&1 == :ok))
   end
 
   defp latest_version?(profile) do
