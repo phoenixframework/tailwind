@@ -142,14 +142,26 @@ defmodule Tailwind do
   end
 
   @doc """
-  Returns the configured tailwind target. By default, it is automatically detected
-  based on the globally configured version.
+  Returns the configured tailwind target.
+
+  By default, it is automatically detected based on `configured_version/0`.
   """
   def configured_target do
-    configured_target(configured_version())
+    target_for_version(configured_version())
   end
 
-  defp configured_target(version) when is_binary(version) do
+  @doc """
+  Returns the configured tailwind target for the given `profile`.
+
+  By default, it is automatically detected based on `configured_version/1`.
+  """
+  def configured_target(profile) when is_atom(profile) do
+    profile
+    |> configured_version()
+    |> target_for_version()
+  end
+
+  defp target_for_version(version) when is_binary(version) do
     Application.get_env(:tailwind, :target, system_target(version))
   end
 
@@ -185,7 +197,7 @@ defmodule Tailwind do
   end
 
   defp default_bin_path(version) do
-    name = "tailwind-#{configured_target(version)}-#{version}"
+    name = "tailwind-#{target_for_version(version)}-#{version}"
 
     if Code.ensure_loaded?(Mix.Project) do
       Path.join(Path.dirname(Mix.Project.build_path()), name)
@@ -510,6 +522,6 @@ defmodule Tailwind do
   defp get_url(base_url, version) do
     base_url
     |> String.replace("$version", version)
-    |> String.replace("$target", configured_target(version))
+    |> String.replace("$target", target_for_version(version))
   end
 end
