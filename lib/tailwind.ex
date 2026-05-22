@@ -75,6 +75,8 @@ defmodule Tailwind do
   use Application
   require Logger
 
+  @config_keys [:version_check, :version, :target, :path]
+
   @doc false
   def start(_, _) do
     if Application.get_env(:tailwind, :version_check, true) do
@@ -114,11 +116,9 @@ defmodule Tailwind do
 
   @doc false
   def profiles do
-    config_keys = [:version_check, :version, :target, :path]
-
     :tailwind
     |> Application.get_all_env()
-    |> Keyword.drop(config_keys)
+    |> Keyword.drop(@config_keys)
     |> Enum.filter(&Keyword.keyword?(elem(&1, 1)))
   end
 
