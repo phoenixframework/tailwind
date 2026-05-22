@@ -99,9 +99,20 @@ defmodule Mix.Tasks.Tailwind.Install do
   end
 
   defp collect_versions do
-    for {profile, _} <- Tailwind.profiles(), uniq: true do
-      {Tailwind.configured_version(profile), latest_version?(profile)}
+    case Tailwind.profiles() do
+      [] ->
+        [{Tailwind.configured_version(), latest_version?()}]
+
+      profiles ->
+        for {profile, _} <- profiles, uniq: true do
+          {Tailwind.configured_version(profile), latest_version?(profile)}
+        end
     end
+  end
+
+  defp latest_version? do
+    version = Tailwind.configured_version()
+    match?({:ok, ^version}, Tailwind.bin_version())
   end
 
   defp latest_version?(profile) do
