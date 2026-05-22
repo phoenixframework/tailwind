@@ -188,14 +188,17 @@ defmodule Tailwind do
   The executable may not be available if it was not yet installed.
   """
   def bin_path(version \\ configured_version()) do
+    Application.get_env(:tailwind, :path) || default_bin_path(version)
+  end
+
+  defp default_bin_path(version) do
     name = "tailwind-#{configured_target(version)}-#{version}"
 
-    Application.get_env(:tailwind, :path) ||
-      if Code.ensure_loaded?(Mix.Project) do
-        Path.join(Path.dirname(Mix.Project.build_path()), name)
-      else
-        Path.expand("_build/#{name}")
-      end
+    if Code.ensure_loaded?(Mix.Project) do
+      Path.join(Path.dirname(Mix.Project.build_path()), name)
+    else
+      Path.expand("_build/#{name}")
+    end
   end
 
   @doc """
