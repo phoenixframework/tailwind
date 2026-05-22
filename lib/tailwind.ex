@@ -210,6 +210,12 @@ defmodule Tailwind do
     |> get_version()
   end
 
+  @doc """
+  Returns the version of the executable for the given `profile`.
+
+  Returns `{:ok, vsn}` on success or `:error` when the executable
+  is not available.
+  """
   def bin_version(profile) when is_atom(profile) do
     profile
     |> configured_version()
