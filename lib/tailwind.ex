@@ -325,7 +325,9 @@ defmodule Tailwind do
     end
 
     File.write!(bin_path, binary, [:binary])
-    File.chmod(bin_path, 0o755)
+    File.chmod!(bin_path, 0o755)
+
+    :ok
   end
 
   # Available targets:
