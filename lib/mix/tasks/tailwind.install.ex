@@ -54,7 +54,7 @@ defmodule Mix.Tasks.Tailwind.Install do
 
   defp resolve_versions(opts) do
     for {version, latest?} <- collect_versions(),
-        not (opts[:if_missing] && latest?) do
+        !(opts[:if_missing] && latest?) do
       version
     end
   end
