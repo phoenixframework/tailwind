@@ -132,8 +132,8 @@ defmodule Tailwind do
   @doc """
   Returns the configured tailwind version for a specific profile.
 
-  If not explicitly configured, falls back to `configured_version/0`.
-  Raises if the given profile does not exist.
+  If the profile does not exist or a version is not explicitly configured,
+  falls back to `configured_version/0`.
   """
   def configured_version(profile) when is_atom(profile) do
     :tailwind
