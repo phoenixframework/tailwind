@@ -315,7 +315,7 @@ defmodule Tailwind do
   def install(base_url, version) do
     url = get_url(base_url, version)
     bin_path = bin_path(version)
-    binary = fetch_body!(url)
+    binary = fetch_body!(version, url)
     File.mkdir_p!(Path.dirname(bin_path))
 
     # MacOS doesn't recompute code signing information if a binary
@@ -394,7 +394,7 @@ defmodule Tailwind do
 
   defp maybe_add_abi_suffix(_, _), do: ""
 
-  defp fetch_body!(url, retry \\ true) when is_binary(url) do
+  defp fetch_body!(version, url, retry \\ true) when is_binary(url) do
     scheme = URI.parse(url).scheme
     url = String.to_charlist(url)
     Logger.debug("Downloading tailwind from #{url}")
@@ -438,14 +438,14 @@ defmodule Tailwind do
 
         You can see the available files for the configured version at:
 
-        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{configured_version()}
+        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{version}
         """
 
       {true, {:error, {:failed_connect, [{:to_address, _}, {inet, _, reason}]}}}
       when inet in [:inet, :inet6] and
              reason in [:ehostunreach, :enetunreach, :eprotonosupport, :nxdomain] ->
         :httpc.set_options(ipfamily: fallback(inet))
-        fetch_body!(to_string(url), false)
+        fetch_body!(version, to_string(url), false)
 
       other ->
         raise """
@@ -458,7 +458,7 @@ defmodule Tailwind do
              your certificates are set via OTP ca certfile overide via SSL configuration.
 
           2. Manually download the executable from the URL above and
-             place it at "_build/tailwind-#{configured_target()}"
+             place it at "#{bin_path(version)}"
 
           3. Install and use Tailwind from npmJS. See our module documentation
              to learn more: https://hexdocs.pm/tailwind
