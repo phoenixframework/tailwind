@@ -35,7 +35,7 @@ defmodule TailwindTest do
       Application.delete_env(:tailwind, :pinned)
     end)
 
-    assert_raise RuntimeError, ~r/cannot configure per-profile :version/, fn ->
+    assert_raise ArgumentError, ~r/cannot configure per-profile :version/, fn ->
       Tailwind.install("https://example.invalid/$version/$target", "3.4.17")
     end
   end
