@@ -21,6 +21,10 @@ defmodule Tailwind do
           cd: Path.expand("..", __DIR__),
         ]
 
+  It is also possible to override the required tailwind CLI version on
+  profile-basis. This is incompatible with the global `:path` setting, since `:path` points to a single executable. Configuring a profile
+  with its own `:version` while `:path` is set will raise at boot.
+
   ## Tailwind configuration
 
   There are four global configurations for the tailwind application:
@@ -72,8 +76,12 @@ defmodule Tailwind do
   use Application
   require Logger
 
+  @config_keys [:version_check, :version, :target, :path]
+
   @doc false
   def start(_, _) do
+    validate_config!()
+
     if Application.get_env(:tailwind, :version_check, true) do
       unless Application.get_env(:tailwind, :version) do
         Logger.warning("""
@@ -83,20 +91,22 @@ defmodule Tailwind do
         """)
       end
 
-      configured_version = configured_version()
+      for {profile, config} <- profiles() do
+        configured_version = Keyword.get(config, :version, configured_version())
 
-      case bin_version() do
-        {:ok, ^configured_version} ->
-          :ok
+        case bin_version(profile) do
+          {:ok, ^configured_version} ->
+            :ok
 
-        {:ok, version} ->
-          Logger.warning("""
-          Outdated tailwind version. Expected #{configured_version}, got #{version}. \
-          Please run `mix tailwind.install` or update the version in your config files.\
-          """)
+          {:ok, version} ->
+            Logger.warning("""
+            Outdated tailwind version. Expected #{configured_version}, got #{version}. \
+            Please run `mix tailwind.install` or update the version in your config files.\
+            """)
 
-        :error ->
-          :ok
+          :error ->
+            :ok
+        end
       end
     end
 
@@ -107,6 +117,14 @@ defmodule Tailwind do
   # Latest known version at the time of publishing.
   def latest_version, do: @latest_version
 
+  @doc false
+  def profiles do
+    :tailwind
+    |> Application.get_all_env()
+    |> Keyword.drop(@config_keys)
+    |> Enum.filter(&Keyword.keyword?(elem(&1, 1)))
+  end
+
   @doc """
   Returns the configured tailwind version.
   """
@@ -115,16 +133,68 @@ defmodule Tailwind do
   end
 
   @doc """
-  Returns the configured tailwind target. By default, it is automatically detected.
+  Returns the configured tailwind version for a specific profile.
+
+  If the profile does not exist or a version is not explicitly configured,
+  falls back to `configured_version/0`.
+  """
+  def configured_version(profile) when is_atom(profile) do
+    :tailwind
+    |> Application.get_env(profile, [])
+    |> Keyword.get(:version, configured_version())
+  end
+
+  @doc """
+  Returns the configured tailwind target.
+
+  By default, it is automatically detected based on `configured_version/0`.
   """
   def configured_target do
-    Application.get_env(:tailwind, :target, target())
+    target_for_version(configured_version())
+  end
+
+  @doc """
+  Returns the configured tailwind target for the given `profile`.
+
+  By default, it is automatically detected based on `configured_version/1`.
+  """
+  def configured_target(profile) when is_atom(profile) do
+    profile
+    |> configured_version()
+    |> target_for_version()
+  end
+
+  defp target_for_version(version) when is_binary(version) do
+    Application.get_env(:tailwind, :target, system_target(version))
+  end
+
+  defp validate_config! do
+    if Application.get_env(:tailwind, :path) do
+      profiles_with_version =
+        for {profile, config} <- profiles(),
+            Keyword.has_key?(config, :version),
+            do: profile
+
+      if profiles_with_version != [] do
+        raise ArgumentError, """
+        cannot configure per-profile :version when global :path is set.
+
+        The global :path points to a single tailwind executable, so it is
+        incompatible with profiles that require different versions.
+
+        Profile(s) with :version configured: #{inspect(profiles_with_version)}
+
+        Either remove :path from your :tailwind config, or remove :version
+        from the offending profile(s).
+        """
+      end
+    end
   end
 
   @doc """
   Returns the configuration for the given profile.
 
-  Returns nil if the profile does not exist.
+  Raises if the profile does not exist.
   """
   def config_for!(profile) when is_atom(profile) do
     Application.get_env(:tailwind, profile) ||
@@ -144,30 +214,50 @@ defmodule Tailwind do
   end
 
   @doc """
-  Returns the path to the executable.
+  Returns the path to the executable for the given `version`.
 
   The executable may not be available if it was not yet installed.
   """
-  def bin_path do
-    name = "tailwind-#{configured_target()}"
+  def bin_path(version \\ configured_version()) do
+    Application.get_env(:tailwind, :path) || default_bin_path(version)
+  end
 
-    Application.get_env(:tailwind, :path) ||
-      if Code.ensure_loaded?(Mix.Project) do
-        Path.join(Path.dirname(Mix.Project.build_path()), name)
-      else
-        Path.expand("_build/#{name}")
-      end
+  defp default_bin_path(version) do
+    name = "tailwind-#{target_for_version(version)}-#{version}"
+
+    if Code.ensure_loaded?(Mix.Project) do
+      Path.join(Path.dirname(Mix.Project.build_path()), name)
+    else
+      Path.expand("_build/#{name}")
+    end
   end
 
   @doc """
-  Returns the version of the tailwind executable.
+  Returns the version of the executable.
 
-  Returns `{:ok, version_string}` on success or `:error` when the executable
+  Returns `{:ok, vsn}` on success or `:error` when the executable
   is not available.
   """
   def bin_version do
-    path = bin_path()
+    configured_version()
+    |> bin_path()
+    |> get_version()
+  end
 
+  @doc """
+  Returns the version of the executable for the given `profile`.
+
+  Returns `{:ok, vsn}` on success or `:error` when the executable
+  is not available.
+  """
+  def bin_version(profile) when is_atom(profile) do
+    profile
+    |> configured_version()
+    |> bin_path()
+    |> get_version()
+  end
+
+  defp get_version(path) do
     with true <- File.exists?(path),
          {out, 0} <- System.cmd(path, ["--help"], env: %{"NO_COLOR" => "1"}),
          [vsn] <- Regex.run(~r/tailwindcss v([^\s]+)/, out, capture: :all_but_first) do
@@ -178,7 +268,7 @@ defmodule Tailwind do
   end
 
   @doc """
-  Runs the given command with `args`.
+  Runs the tailwind CLI for the given `profile` with `args`.
 
   The given args will be appended to the configured args.
   The task output will be streamed directly to stdio. It
@@ -200,7 +290,9 @@ defmodule Tailwind do
       stderr_to_stdout: true
     ]
 
-    bin_path()
+    profile
+    |> configured_version()
+    |> bin_path()
     |> System.cmd(args ++ extra_args, opts)
     |> elem(1)
   end
@@ -222,20 +314,22 @@ defmodule Tailwind do
   end
 
   @doc """
-  Installs, if not available, and then runs `tailwind`.
+  Installs, if not available, and then runs the tailwind CLI.
 
   Returns the same as `run/2`.
   """
-  def install_and_run(profile, args) do
-    unless File.exists?(bin_path()) do
-      install()
+  def install_and_run(profile, args) when is_atom(profile) do
+    version = configured_version(profile)
+
+    unless File.exists?(bin_path(version)) do
+      install(default_base_url(), version)
     end
 
     run(profile, args)
   end
 
   @doc """
-  The default URL to install Tailwind from.
+  Returns the default URL to install Tailwind from.
   """
   def default_base_url do
     "https://github.com/tailwindlabs/tailwindcss/releases/download/v$version/tailwindcss-$target"
@@ -243,11 +337,21 @@ defmodule Tailwind do
 
   @doc """
   Installs tailwind with `configured_version/0`.
+
+  If given, the executable is downloaded from `base_url`,
+  otherwise, `default_base_url/0` is used.
   """
   def install(base_url \\ default_base_url()) do
-    url = get_url(base_url)
-    bin_path = bin_path()
-    binary = fetch_body!(url)
+    install(base_url, configured_version())
+  end
+
+  @doc false
+  def install(base_url, version) do
+    validate_config!()
+
+    url = get_url(base_url, version)
+    bin_path = bin_path(version)
+    binary = fetch_body!(version, url)
     File.mkdir_p!(Path.dirname(bin_path))
 
     # MacOS doesn't recompute code signing information if a binary
@@ -257,7 +361,9 @@ defmodule Tailwind do
     end
 
     File.write!(bin_path, binary, [:binary])
-    File.chmod(bin_path, 0o755)
+    File.chmod!(bin_path, 0o755)
+
+    :ok
   end
 
   # Available targets:
@@ -269,7 +375,7 @@ defmodule Tailwind do
   #  tailwindcss-macos-arm64
   #  tailwindcss-macos-x64
   #  tailwindcss-windows-x64.exe
-  defp target do
+  defp system_target(version) do
     arch_str = :erlang.system_info(:system_architecture)
     target_triple = arch_str |> List.to_string() |> String.split("-")
 
@@ -297,7 +403,7 @@ defmodule Tailwind do
         "freebsd-x64"
 
       {{:unix, :linux}, "aarch64", abi, 64} ->
-        "linux-arm64" <> maybe_add_abi_suffix(abi)
+        "linux-arm64" <> maybe_add_abi_suffix(abi, version)
 
       {{:unix, :linux}, "arm", _abi, 32} ->
         "linux-armv7"
@@ -306,27 +412,27 @@ defmodule Tailwind do
         "linux-armv7"
 
       {{:unix, _osname}, arch, abi, 64} when arch in ~w(x86_64 amd64) ->
-        "linux-x64" <> maybe_add_abi_suffix(abi)
+        "linux-x64" <> maybe_add_abi_suffix(abi, version)
 
       {_os, _arch, _abi, _wordsize} ->
         raise "tailwind is not available for architecture: #{arch_str}"
     end
   end
 
-  defp maybe_add_abi_suffix("musl") do
+  defp maybe_add_abi_suffix("musl", version) do
     # Tailwind CLI v4+ added explicit musl versions for Linux as
     # tailwind-linux-x64-musl
     # tailwind-linux-arm64-musl
-    if Version.match?(configured_version(), "~> 4.0") do
+    if Version.match?(version, "~> 4.0") do
       "-musl"
     else
       ""
     end
   end
 
-  defp maybe_add_abi_suffix(_), do: ""
+  defp maybe_add_abi_suffix(_, _), do: ""
 
-  defp fetch_body!(url, retry \\ true) when is_binary(url) do
+  defp fetch_body!(version, url, retry \\ true) when is_binary(url) do
     scheme = URI.parse(url).scheme
     url = String.to_charlist(url)
     Logger.debug("Downloading tailwind from #{url}")
@@ -370,14 +476,14 @@ defmodule Tailwind do
 
         You can see the available files for the configured version at:
 
-        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{configured_version()}
+        https://github.com/tailwindlabs/tailwindcss/releases/tag/v#{version}
         """
 
       {true, {:error, {:failed_connect, [{:to_address, _}, {inet, _, reason}]}}}
       when inet in [:inet, :inet6] and
              reason in [:ehostunreach, :enetunreach, :eprotonosupport, :nxdomain] ->
         :httpc.set_options(ipfamily: fallback(inet))
-        fetch_body!(to_string(url), false)
+        fetch_body!(version, to_string(url), false)
 
       other ->
         raise """
@@ -390,7 +496,7 @@ defmodule Tailwind do
              your certificates are set via OTP ca certfile overide via SSL configuration.
 
           2. Manually download the executable from the URL above and
-             place it at "_build/tailwind-#{configured_target()}"
+             place it at "#{bin_path(version)}"
 
           3. Install and use Tailwind from npmJS. See our module documentation
              to learn more: https://hexdocs.pm/tailwind
@@ -441,9 +547,9 @@ defmodule Tailwind do
     :erlang.system_info(:otp_release) |> List.to_integer()
   end
 
-  defp get_url(base_url) do
+  defp get_url(base_url, version) do
     base_url
-    |> String.replace("$version", configured_version())
-    |> String.replace("$target", configured_target())
+    |> String.replace("$version", version)
+    |> String.replace("$target", target_for_version(version))
   end
 end
