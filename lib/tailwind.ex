@@ -285,7 +285,7 @@ defmodule Tailwind do
 
     opts = [
       cd: normalize_windows_driver(config[:cd] || File.cwd!()),
-      env: env,
+      env: normalize_env(env),
       into: IO.stream(:stdio, :line),
       stderr_to_stdout: true
     ]
@@ -551,5 +551,19 @@ defmodule Tailwind do
     base_url
     |> String.replace("$version", version)
     |> String.replace("$target", target_for_version(version))
+  end
+
+  defp normalize_env(env) do
+    Map.new(env, fn
+      {key, value} when is_list(value) -> {key, Enum.join(value, path_sep())}
+      other -> other
+    end)
+  end
+
+  defp path_sep do
+    case :os.type() do
+      {:win32, _} -> ";"
+      {:unix, _} -> ":"
+    end
   end
 end
