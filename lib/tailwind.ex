@@ -176,7 +176,7 @@ defmodule Tailwind do
             do: profile
 
       if profiles_with_version != [] do
-        raise """
+        raise ArgumentError, """
         cannot configure per-profile :version when global :path is set.
 
         The global :path points to a single tailwind executable, so it is
