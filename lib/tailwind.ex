@@ -22,7 +22,8 @@ defmodule Tailwind do
         ]
 
   It is also possible to override the required tailwind CLI version on
-  profile-basis.
+  profile-basis. This is incompatible with the global `:path` setting, since `:path` points to a single executable. Configuring a profile
+  with its own `:version` while `:path` is set will raise at boot.
 
   ## Tailwind configuration
 
@@ -79,6 +80,8 @@ defmodule Tailwind do
 
   @doc false
   def start(_, _) do
+    validate_config!()
+
     if Application.get_env(:tailwind, :version_check, true) do
       unless Application.get_env(:tailwind, :version) do
         Logger.warning("""
@@ -163,6 +166,29 @@ defmodule Tailwind do
 
   defp target_for_version(version) when is_binary(version) do
     Application.get_env(:tailwind, :target, system_target(version))
+  end
+
+  defp validate_config! do
+    if Application.get_env(:tailwind, :path) do
+      profiles_with_version =
+        for {profile, config} <- profiles(),
+            Keyword.has_key?(config, :version),
+            do: profile
+
+      if profiles_with_version != [] do
+        raise """
+        cannot configure per-profile :version when global :path is set.
+
+        The global :path points to a single tailwind executable, so it is
+        incompatible with profiles that require different versions.
+
+        Profile(s) with :version configured: #{inspect(profiles_with_version)}
+
+        Either remove :path from your :tailwind config, or remove :version
+        from the offending profile(s).
+        """
+      end
+    end
   end
 
   @doc """
@@ -321,6 +347,8 @@ defmodule Tailwind do
 
   @doc false
   def install(base_url, version) do
+    validate_config!()
+
     url = get_url(base_url, version)
     bin_path = bin_path(version)
     binary = fetch_body!(version, url)
