@@ -1,7 +1,7 @@
 import Config
 
 config :tailwind,
-  version: "4.1.12",
+  version: "4.3.0",
   another: [
     args: ["--help"]
   ]

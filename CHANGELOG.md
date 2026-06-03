@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.5.0 (Unreleased)
+
+* Allow configuring `:version` per profile
+
 ## v0.4.1 (2025-10-17)
 
 * Ignore ANSI escape codes when checking version

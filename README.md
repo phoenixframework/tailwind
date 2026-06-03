@@ -23,7 +23,7 @@ Once installed, change your `config/config.exs` to pick your
 Tailwind version of choice:
 
 ```elixir
-config :tailwind, version: "4.1.12"
+config :tailwind, version: "4.3.0"
 ```
 
 Note that `:tailwind` 0.3+ assumes Tailwind v4+ by default.
@@ -95,7 +95,7 @@ directory, the OS environment, and default arguments to the
 
 ```elixir
 config :tailwind,
-  version: "4.1.12",
+  version: "4.3.0",
   default: [
     args: ~w(
       --input=assets/css/app.css
@@ -139,7 +139,7 @@ We'll also give it our `assets/css/app.css` as our css entry point:
 
 ```elixir
 config :tailwind,
-  version: "4.1.12",
+  version: "4.3.0",
   default: [
     args: ~w(
       --input=assets/css/app.css
@@ -157,7 +157,7 @@ the web application's asset directory in the configuration:
 
 ```elixir
 config :tailwind,
-  version: "4.1.12",
+  version: "4.3.0",
   default: [
     args: ...,
     cd: Path.expand("../apps/<folder_ending_with_web>", __DIR__)
@@ -211,7 +211,7 @@ For a typical Phoenix application, updating from Tailwind v3 to v4 requires the 
     ```diff
      config :tailwind,
     -   version: "3.4.13",
-    +   version: "4.1.12",
+    +   version: "4.3.0",
         default: [
           args: ~w(
     -       --config=tailwind.config.js
