@@ -3,6 +3,7 @@
 ## v0.5.0 (Unreleased)
 
 * Allow configuring `:version` per profile
+* Allow `env` values to be lists, joined by the OS path separator
 
 ## v0.4.1 (2025-10-17)
 
