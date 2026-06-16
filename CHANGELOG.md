@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## v0.5.0 (Unreleased)
+## v0.5.1 (2026-06-16)
+
+* Fix executable name on Windows
+
+## v0.5.0 (2026-06-11)
 
 * Allow configuring `:version` per profile
 * Allow `env` values to be lists, joined by the OS path separator
