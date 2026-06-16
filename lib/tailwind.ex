@@ -222,8 +222,15 @@ defmodule Tailwind do
     Application.get_env(:tailwind, :path) || default_bin_path(version)
   end
 
+  defp executable_suffix do
+    case :os.type() do
+      {:win32, _} -> ".exe"
+      _ -> ""
+    end
+  end
+
   defp default_bin_path(version) do
-    name = "tailwind-#{target_for_version(version)}-#{version}"
+    name = "tailwind-#{target_for_version(version)}-#{version}#{executable_suffix()}"
 
     if Code.ensure_loaded?(Mix.Project) do
       Path.join(Path.dirname(Mix.Project.build_path()), name)
@@ -388,7 +395,7 @@ defmodule Tailwind do
 
     case {:os.type(), arch, abi, :erlang.system_info(:wordsize) * 8} do
       {{:win32, _}, _arch, _abi, 64} ->
-        "windows-x64.exe"
+        "windows-x64"
 
       {{:unix, :darwin}, arch, _abi, 64} when arch in ~w(arm aarch64) ->
         "macos-arm64"
@@ -548,9 +555,15 @@ defmodule Tailwind do
   end
 
   defp get_url(base_url, version) do
+    target =
+      case target_for_version(version) do
+        "windows-x64" -> "windows-x64.exe"
+        other -> other
+      end
+
     base_url
     |> String.replace("$version", version)
-    |> String.replace("$target", target_for_version(version))
+    |> String.replace("$target", target)
   end
 
   defp normalize_env(env) do
