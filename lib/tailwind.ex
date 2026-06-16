@@ -223,7 +223,13 @@ defmodule Tailwind do
   end
 
   defp default_bin_path(version) do
-    name = "tailwind-#{target_for_version(version)}-#{version}"
+    [target, suffix] =
+      case String.split(target_for_version(version), ".", parts: 2) do
+        [target] -> [target, ""]
+        [target, suffix] -> [target, "." <> suffix]
+      end
+
+    name = "tailwind-#{target}-#{version}#{suffix}"
 
     if Code.ensure_loaded?(Mix.Project) do
       Path.join(Path.dirname(Mix.Project.build_path()), name)

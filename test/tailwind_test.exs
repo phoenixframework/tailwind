@@ -50,6 +50,20 @@ defmodule TailwindTest do
            end) =~ @version
   end
 
+  test "bin_path/1 keeps the executable extension after the version" do
+    Application.put_env(:tailwind, :target, "windows-x64.exe")
+    on_exit(fn -> Application.delete_env(:tailwind, :target) end)
+
+    assert Path.basename(Tailwind.bin_path()) == "tailwind-windows-x64-#{@version}.exe"
+  end
+
+  test "bin_path/1 appends the version for targets without an extension" do
+    Application.put_env(:tailwind, :target, "linux-x64")
+    on_exit(fn -> Application.delete_env(:tailwind, :target) end)
+
+    assert Path.basename(Tailwind.bin_path()) == "tailwind-linux-x64-#{@version}"
+  end
+
   test "installs and updates with custom config" do
     Application.put_env(:tailwind, :version, "3.4.17")
 
