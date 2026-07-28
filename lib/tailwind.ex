@@ -499,7 +499,7 @@ defmodule Tailwind do
         You can try again later and, if that does not work, you might:
 
           1. If behind a proxy, ensure your proxy is configured and that
-             your certificates are set via OTP ca certfile overide via SSL configuration.
+             your certificates are set via OTP ca certfile override via SSL configuration.
 
           2. Manually download the executable from the URL above and
              place it at "#{bin_path(version)}"
