@@ -467,7 +467,7 @@ defmodule Tailwind do
       ]
       |> maybe_add_proxy_auth(scheme)
 
-    options = [body_format: :binary]
+    options = [body_format: :binary, max_header_size: 32_768]
 
     case {retry, :httpc.request(:get, {url, []}, http_options, options)} do
       {_, {:ok, {{_, 200, _}, _headers, body}}} ->
