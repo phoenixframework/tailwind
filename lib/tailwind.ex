@@ -467,7 +467,8 @@ defmodule Tailwind do
       ]
       |> maybe_add_proxy_auth(scheme)
 
-    options = [body_format: :binary]
+    # GitHub's release redirects can exceed httpc's default 10 KiB header limit.
+    options = [body_format: :binary, max_header_size: 64 * 1024]
 
     case {retry, :httpc.request(:get, {url, []}, http_options, options)} do
       {_, {:ok, {{_, 200, _}, _headers, body}}} ->
