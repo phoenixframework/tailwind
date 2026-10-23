@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.5.2 (2026-10-24)
+
+* Allow larger response headers when downloading Tailwind (fixes `{:header_too_long, {:max, 10240}}` on OTP 27+)
+* Fix typo in error message
+
 ## v0.5.1 (2026-06-16)
 
 * Fix executable name on Windows
